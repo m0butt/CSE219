@@ -32,9 +32,11 @@ import javafx.stage.Stage;
 import javax.swing.JScrollPane;
 
 public class SokobanUI extends Pane {
-        int gridColumns;
-        int gridRows;
-        int grid[][]; 
+
+    int gridColumns;
+    int gridRows;
+    int grid[][];
+
     /**
      * The SokobanUIState represents the four screen states that are possible
      * for the Sokoban game application. Depending on which state is in current
@@ -99,15 +101,13 @@ public class SokobanUI extends Pane {
     private SokobanEventHandler eventHandler;
     private SokobanErrorHandler errorHandler;
     private SokobanDocumentManager docManager;
-    
-    //GC
-        GridRenderer gridRenderer;
-        private GraphicsContext gc;
-              
 
+    //GC
+    GridRenderer gridRenderer = new GridRenderer();
+    private GraphicsContext gc;
 
     SokobanGameStateManager gsm;
-    
+
     public SokobanUI() {
         gsm = new SokobanGameStateManager(this);
         eventHandler = new SokobanEventHandler(this);
@@ -149,9 +149,9 @@ public class SokobanUI extends Pane {
 
         PropertiesManager props = PropertiesManager.getPropertiesManager();
         //paneWidth = Integer.parseInt(props
-                //.getProperty(SokobanPropertyType.WINDOW_WIDTH));
+        //.getProperty(SokobanPropertyType.WINDOW_WIDTH));
         //paneHeigth = Integer.parseInt(props
-                //.getProperty(SokobanPropertyType.WINDOW_HEIGHT));
+        //.getProperty(SokobanPropertyType.WINDOW_HEIGHT));
         paneWidth = 800;
         paneHeigth = 1200;
         mainPane.resize(paneWidth, paneHeigth);
@@ -203,27 +203,32 @@ public class SokobanUI extends Pane {
             // AND BUILD THE BUTTON
             Button levelButton = new Button();
             levelButton.setGraphic(levelImageView);
-            
+
             // CONNECT THE BUTTON TO THE EVENT HANDLER
             levelButton.setOnAction(new EventHandler<ActionEvent>() {
 
                 @Override
                 public void handle(ActionEvent event) {
                     // TODO
-                    eventHandler.respondToSelectLevelRequest(levelFile);
+//                  
+                    openLevel(levelFile);
+                    changeWorkspace(SokobanUIState.PLAY_GAME_STATE);
+                    gridRenderer.repaint();
+                    System.out.println(gridRenderer.equals(null));
+
                 }
             });
             // TODO
             levelSelectionPane.getChildren().add(levelButton);
-            
+
             // TODO: enable only the first level
             levelButton.setDisable(false);
-            levelSelectionPane.resize(200,200);
+            levelSelectionPane.resize(200, 200);
         }
 
         mainPane.setCenter(splashScreenPane);
         mainPane.setBottom(levelSelectionPane);
-        mainPane.resize(800,1200);
+        mainPane.resize(800, 1200);
     }
 
     /**
@@ -248,7 +253,6 @@ public class SokobanUI extends Pane {
         //initGameScreen();
         //initStatsPane();
         //initHelpPane();
-
         // WE'LL START OUT WITH THE GAME SCREEN
         changeWorkspace(SokobanUIState.PLAY_GAME_STATE);
 
@@ -373,7 +377,6 @@ public class SokobanUI extends Pane {
         System.out.println("in the initWorkspace");
     }
 
-
     public Image loadImage(String imageName) {
         Image img = new Image(ImgPath + imageName);
         return img;
@@ -400,58 +403,57 @@ public class SokobanUI extends Pane {
         }
 
     }
-    public void open(String level){
-                
-            PropertiesManager Properties= PropertiesManager.getPropertiesManager();
-            String levelpath= "./levels/";
-                        
-            File fileToOpen = new File(levelpath + level);
-            String fileName = fileToOpen.getPath();
-            try {
-                if (fileToOpen != null) {
+
+    public void openLevel(String level) {
+
+        PropertiesManager Properties = PropertiesManager.getPropertiesManager();
+        String levelpath = "./levels/";
+
+        File fileToOpen = new File(levelpath + level);
+        String fileName = fileToOpen.getPath();
+        try {
+            if (fileToOpen != null) {
                     // LET'S USE A FAST LOADING TECHNIQUE. WE'LL LOAD ALL OF THE
-                    // BYTES AT ONCE INTO A BYTE ARRAY, AND THEN PICK THAT APART.
-                    // THIS IS FAST BECAUSE IT ONLY HAS TO DO FILE READING ONCE
-                    byte[] bytes = new byte[Long.valueOf(fileToOpen.length()).intValue()];
-                    ByteArrayInputStream bais = new ByteArrayInputStream(bytes);
-                    FileInputStream fis = new FileInputStream(fileToOpen);
-                    BufferedInputStream bis = new BufferedInputStream(fis);
+                // BYTES AT ONCE INTO A BYTE ARRAY, AND THEN PICK THAT APART.
+                // THIS IS FAST BECAUSE IT ONLY HAS TO DO FILE READING ONCE
+                byte[] bytes = new byte[Long.valueOf(fileToOpen.length()).intValue()];
+                ByteArrayInputStream bais = new ByteArrayInputStream(bytes);
+                FileInputStream fis = new FileInputStream(fileToOpen);
+                BufferedInputStream bis = new BufferedInputStream(fis);
 
-                    // HERE IT IS, THE ONLY READY REQUEST WE NEED
-                    bis.read(bytes);
-                    bis.close();
+                // HERE IT IS, THE ONLY READY REQUEST WE NEED
+                bis.read(bytes);
+                bis.close();
 
-                    // NOW WE NEED TO LOAD THE DATA FROM THE BYTE ARRAY
-                    DataInputStream dis = new DataInputStream(bais);
+                // NOW WE NEED TO LOAD THE DATA FROM THE BYTE ARRAY
+                DataInputStream dis = new DataInputStream(bais);
 
                     // NOTE THAT WE NEED TO LOAD THE DATA IN THE SAME
-                    // ORDER AND FORMAT AS WE SAVED IT
-                    // FIRST READ THE GRID DIMENSIONS
-                    int initGridColumns = dis.readInt();
-                    int initGridRows = dis.readInt();
-                    int[][] newGrid = new int[initGridColumns][initGridRows];
-lllklojl
-        sclkalck
-        sl;akx;ldsk
-                
-                    // AND NOW ALL THE CELL VALUES
-                    for (int i = 0; i < initGridColumns; i++) {
-                        for (int j = 0; j < initGridRows; j++) {
-                            newGrid[i][j] = dis.readInt();
-                        }
-                    }
+                // ORDER AND FORMAT AS WE SAVED IT
+                // FIRST READ THE GRID DIMENSIONS
+                int initGridColumns = dis.readInt();
+                int initGridRows = dis.readInt();
+                int[][] newGrid = new int[initGridColumns][initGridRows];
 
-                    grid = newGrid;
-                    gridColumns = initGridColumns;
-                    gridRows = initGridRows;
-                    gridRenderer.repaint();
+                // AND NOW ALL THE CELL VALUES
+                for (int i = 0; i < initGridColumns; i++) {
+                    for (int j = 0; j < initGridRows; j++) {
+                        newGrid[i][j] = dis.readInt();
+                    }
                 }
-            } catch (Exception e) {
-                e.printStackTrace();
+
+                grid = newGrid;
+                gridColumns = initGridColumns;
+                gridRows = initGridRows;
+                gridRenderer.repaint();
             }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
     }
-  /**
+
+    /**
      * This class renders the grid for us. Note that we also listen for mouse
      * clicks on it.
      */
@@ -473,7 +475,10 @@ lllklojl
         public GridRenderer() {
             this.setWidth(500);
             this.setHeight(500);
+            gc = this.getGraphicsContext2D();
+            gc.drawImage(sokobanImage, 100, 100);
             repaint();
+            System.out.println("bitch");
         }
 
         public void repaint() {
@@ -532,7 +537,31 @@ lllklojl
             }
         }
 
+    }
+
+    /**
+     * This method initializes all the event handlers needed by this
+     * application.
+     */
+    private void initHandlers() {
+        // WE'LL UPDATE THE CELL-TILE COUNTS WHEN THE
+        // USER CLICKS THE MOUSE ON THE RENDERING PANEL
+        gridRenderer.setOnMouseClicked(mouseEvent -> {
+            // FIGURE OUT THE CORRESPONDING COLUMN & ROW
+            double w = gridRenderer.getWidth() / gridColumns;
+            double col = mouseEvent.getX() / w;
+            double h = gridRenderer.getHeight() / gridRows;
+            double row = mouseEvent.getY() / h;
+            // GET THE VALUE IN THAT CELL
+            int value = grid[(int) col][(int) row];
+            if (value < 5) {
+                grid[(int) col][(int) row]++;
+            } else {
+                grid[(int) col][(int) row] = 0;
+            }
+            gridRenderer.repaint();
+        });
 
 }
-    
 }
+
