@@ -430,7 +430,10 @@ public class SokobanUI extends Pane {
                     int initGridColumns = dis.readInt();
                     int initGridRows = dis.readInt();
                     int[][] newGrid = new int[initGridColumns][initGridRows];
-
+lllklojl
+        sclkalck
+        sl;akx;ldsk
+                
                     // AND NOW ALL THE CELL VALUES
                     for (int i = 0; i < initGridColumns; i++) {
                         for (int j = 0; j < initGridRows; j++) {
