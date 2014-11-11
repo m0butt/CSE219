@@ -3,19 +3,31 @@ package JourneyUI;
 /**
  * Created by omar on 11/10/14.
  */
+import JourneyGameComponents.City;
 import javafx.application.Application;
-import javafx.event.EventHandler;
+import javafx.event.*;
+import javafx.event.Event;
 import javafx.geometry.Pos;
 import javafx.scene.*;
 import javafx.scene.control.*;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
+import javafx.scene.paint.*;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Circle;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
+import javafx.scene.input.MouseEvent;
 
-import java.awt.event.ActionEvent;
+import java.awt.*;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Scanner;
 
 public class JourneyUI {
     private Stage primaryStage;
@@ -27,6 +39,10 @@ public class JourneyUI {
     private Label about;
     private AnchorPane historyPane;
     private AnchorPane aboutPane;
+    private ArrayList<City> cities;
+    private AnchorPane gridPane;
+    private VBox leftBox;
+
     public GridPane getGamePane() {
         return gamePane;
     }
@@ -98,7 +114,12 @@ public class JourneyUI {
         playButton.setOnAction(new EventHandler<javafx.event.ActionEvent>() {
             @Override
             public void handle(javafx.event.ActionEvent event) {
-                eventHandler.startButtonRequest();
+                try{
+                eventHandler.startButtonRequest();} catch (FileNotFoundException e) {
+                    e.printStackTrace();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             }
         });
 
@@ -254,13 +275,17 @@ public class JourneyUI {
         goButton.setOnAction(new EventHandler<javafx.event.ActionEvent>() {
             @Override
             public void handle(javafx.event.ActionEvent event) {
-                eventHandler.goButtonRequest();
+                try {
+                    eventHandler.goButtonRequest();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             }
         });
 
     }
 
-    public void initGameScreen(){
+    public void initGameScreen() throws FileNotFoundException, IOException{
         gamePane = new GridPane();
         gamePane.setPrefSize(1000,1000);
 
@@ -268,11 +293,11 @@ public class JourneyUI {
 
         aboutPane = new AnchorPane();
         historyPane = new AnchorPane();
-        VBox leftBox = new VBox();
+        leftBox = new VBox();
         Label player1Label = new Label("Player 1");
         player1Label.setFont(new Font("Calibri", 52));
         leftBox.getChildren().add(player1Label);
-        final AnchorPane gridPane = new AnchorPane();
+        gridPane = new AnchorPane();
         Image grid1Image = loadImage("grid1.jpg");
         final ImageView grid1ImageView = new ImageView(grid1Image);
         grid1ImageView.setFitHeight(800);
@@ -361,8 +386,6 @@ public class JourneyUI {
         gridHbox3.getChildren().addAll(firstTopLabel, secondTopLabel);
         gridHbox3.setAlignment(Pos.CENTER);
         gridVbox.getChildren().addAll(gridHbox3, gridHbox1, gridHbox2);
-        //gridVbox.getChildren().add(gridHbox1);
-        //gridVbox.getChildren().add(gridHbox2);
         gridVbox.setAlignment(Pos.CENTER);
 
         turnLabel.setFont(font);
@@ -375,14 +398,61 @@ public class JourneyUI {
         gamePane.add(leftBox, 0, 0);
         gamePane.add(gridPane, 1, 0);
         gamePane.add(rightBox, 2, 0);
-        //gamePane.getChildren().add(rightBox);
+        initCoordinateLoader();
+
 
 
 
 
     }
+    public void initCoordinateLoader() throws FileNotFoundException, IOException{
+        File f = null;
 
-    public void switchScreenRequest(String screenName){
+
+        try{
+            cities = new ArrayList<City>();
+            f = new File("untitled.txt");
+            Scanner s = new Scanner(f);
+        while(s.hasNextLine()){
+            Scanner sc = new Scanner(s.nextLine());
+            sc.useDelimiter("\t");
+            final City newCity = new City();
+            newCity.setName(sc.next());
+            newCity.setColor(sc.next());
+            newCity.setQuarter(Integer.parseInt(sc.next()));
+
+            int x = (int)(((sc.nextInt() + 0.0)/2010.0)*600.0);
+            x-=10;
+
+            int y = (int)(((sc.nextInt() + 0.0)/2569.0)*800.0);
+            y-=10;
+            newCity.setxCoordinate(x);
+            newCity.setyCoordinate(y);
+            cities.add(newCity);
+
+
+        }
+        }catch (Exception e){
+            System.out.println(f.getAbsoluteFile());
+            e.printStackTrace();
+        }
+        gridPane.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent event) {
+                for (int i = 0; i < cities.size(); i++) {
+                    if((event.getX() + 20 >= cities.get(i).getxCoordinate() && event.getX() - 20 <= cities.get(i).getxCoordinate()
+                            && event.getY() + 20 >= cities.get(i).getyCoordinate() && event.getY() - 20 <= cities.get(i).getyCoordinate()) && cities.get(i).getQuarter() ==1 ){
+                        System.out.println(cities.get(i).getName());
+                        Label cityName = new Label(cities.get(i).getName());
+                        leftBox.getChildren().add(cityName);
+
+                    }
+                }
+            }
+        });
+    }
+
+    public void switchScreenRequest(String screenName) throws IOException, FileNotFoundException{
         int caseNum = 0;
         if (screenName.equals("selectPlayers"))
             caseNum = 1;

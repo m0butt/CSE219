@@ -2,6 +2,9 @@ package JourneyUI;
 
 import javafx.scene.control.Label;
 
+import java.io.FileNotFoundException;
+import java.io.IOException;
+
 /**
  * Created by omar on 11/10/14.
  */
@@ -11,12 +14,20 @@ public class JourneyEventHandler {
         ui = initUI;
     }
 
-    public void startButtonRequest(){
-        ui.switchScreenRequest("selectPlayers");
+    public void startButtonRequest() throws FileNotFoundException, IOException{
+        try{
+        ui.switchScreenRequest("selectPlayers");}
+        catch (Exception e){
+            System.out.println("hello");
+        }
     }
 
-    public void goButtonRequest(){
-        ui.switchScreenRequest("gameScreen");
+    public void goButtonRequest() throws FileNotFoundException, IOException{
+        try{
+        ui.switchScreenRequest("gameScreen");}
+        catch (Exception e){
+            System.out.println("hello2");
+        }
     }
     public void historyButtonRequest(){
         ui.displayHistory();
