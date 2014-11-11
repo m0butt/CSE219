@@ -12,6 +12,7 @@ import javafx.scene.*;
 import javafx.scene.control.*;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
@@ -19,6 +20,7 @@ import javafx.scene.paint.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.text.Font;
+import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import javafx.scene.input.MouseEvent;
 
@@ -129,7 +131,7 @@ public class JourneyUI {
     public void initSelectPlayersScreen(){
         Label player1Label = new Label("Player 1");
         player1Label.setFont(font);
-
+        TextField player1Field = new TextField("Name");
         Image player1Flag = loadImage("flag_black.png");
         ImageView player1ImageView = new ImageView(player1Flag);
         Button goButton = new Button("GO!");
@@ -144,13 +146,16 @@ public class JourneyUI {
         RadioButton player1Computer = new RadioButton("Computer");
         player1Computer.setToggleGroup(player1Group);
         player1Buttons.getChildren().add(player1Label);
+        player1Buttons.getChildren().add(player1Field);
         player1Buttons.getChildren().add(player1None);
         player1Buttons.getChildren().add(player1Human);
         player1Buttons.getChildren().add(player1Computer);
-        player1Box.getChildren().addAll(goButton);
+        player1Buttons.getChildren().add(goButton);
+        //player1Box.getChildren().addAll(goButton);
         player1Box.getChildren().add(player1Buttons);
         player1Box.getChildren().add(player1ImageView);
 
+        TextField player2Field = new TextField("Name");
         Label player2Label = new Label("Player 2");
         player2Label.setFont(font);
         Image player2Flag = loadImage("flag_white.png");
@@ -166,6 +171,7 @@ public class JourneyUI {
         RadioButton player2Computer = new RadioButton("Computer");
         player2Computer.setToggleGroup(player2Group);
         player2Buttons.getChildren().add(player2Label);
+        player2Buttons.getChildren().add(player2Field);
         player2Buttons.getChildren().add(player2None);
         player2Buttons.getChildren().add(player2Human);
         player2Buttons.getChildren().add(player2Computer);
@@ -173,6 +179,7 @@ public class JourneyUI {
         player2Box.getChildren().add(player2ImageView);
 
         Label player3Label = new Label("Player 3");
+        TextField player3Field = new TextField("Name");
         player3Label.setFont(font);
         Image player3Flag = loadImage("flag_red.png");
         ImageView player3ImageView = new ImageView(player3Flag);
@@ -187,6 +194,7 @@ public class JourneyUI {
         RadioButton player3Computer = new RadioButton("Computer");
         player3Computer.setToggleGroup(player3Group);
         player3Buttons.getChildren().add(player3Label);
+        player3Buttons.getChildren().add(player3Field);
         player3Buttons.getChildren().add(player3None);
         player3Buttons.getChildren().add(player3Human);
         player3Buttons.getChildren().add(player3Computer);
@@ -194,6 +202,7 @@ public class JourneyUI {
         player3Box.getChildren().add(player3ImageView);
 
         Label player4Label = new Label("Player 4");
+        TextField player4Field = new TextField("Name");
         player4Label.setFont(font);
         Image player4Flag = loadImage("flag_yellow.png");
         ImageView player4ImageView = new ImageView(player4Flag);
@@ -208,6 +217,7 @@ public class JourneyUI {
         RadioButton player4Computer = new RadioButton("Computer");
         player4Computer.setToggleGroup(player4Group);
         player4Buttons.getChildren().add(player4Label);
+        player4Buttons.getChildren().add(player4Field);
         player4Buttons.getChildren().add(player4None);
         player4Buttons.getChildren().add(player4Human);
         player4Buttons.getChildren().add(player4Computer);
@@ -215,6 +225,7 @@ public class JourneyUI {
         player4Box.getChildren().add(player4ImageView);
 
         Label player5Label = new Label("Player 5");
+        TextField player5Field = new TextField("Name");
         player5Label.setFont(font);
         Image player5Flag = loadImage("flag_green.png");
         ImageView player5ImageView = new ImageView(player5Flag);
@@ -229,6 +240,7 @@ public class JourneyUI {
         RadioButton player5Computer = new RadioButton("Computer");
         player5Computer.setToggleGroup(player5Group);
         player5Buttons.getChildren().add(player5Label);
+        player5Buttons.getChildren().add(player5Field);
         player5Buttons.getChildren().add(player5None);
         player5Buttons.getChildren().add(player5Human);
         player5Buttons.getChildren().add(player5Computer);
@@ -238,6 +250,7 @@ public class JourneyUI {
 
         Label player6Label = new Label("Player 6");
         player6Label.setFont(font);
+        TextField player6Field = new TextField("Name");
         Image player6Flag = loadImage("flag_blue.png");
         ImageView player6ImageView = new ImageView(player6Flag);
         HBox player6Box = new HBox();
@@ -251,6 +264,7 @@ public class JourneyUI {
         RadioButton player6Computer = new RadioButton("Computer");
         player6Computer.setToggleGroup(player6Group);
         player6Buttons.getChildren().add(player6Label);
+        player6Buttons.getChildren().add(player6Field);
         player6Buttons.getChildren().add(player6None);
         player6Buttons.getChildren().add(player6Human);
         player6Buttons.getChildren().add(player6Computer);
