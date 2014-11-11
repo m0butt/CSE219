@@ -1,14 +1,11 @@
 package JourneyUI;
 
 /**
- * Created by omar on 11/10/14.
+ * Created by Mohammad Butt on 11/10/14.
  */
 import JourneyGameComponents.City;
-import javafx.application.Application;
 import javafx.event.*;
-import javafx.event.Event;
 import javafx.geometry.Pos;
-import javafx.scene.*;
 import javafx.scene.control.*;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -16,15 +13,10 @@ import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
-import javafx.scene.paint.*;
-import javafx.scene.paint.Color;
-import javafx.scene.shape.Circle;
 import javafx.scene.text.Font;
-import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import javafx.scene.input.MouseEvent;
 
-import java.awt.*;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
