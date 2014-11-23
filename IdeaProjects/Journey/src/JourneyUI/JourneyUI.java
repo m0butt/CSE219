@@ -13,10 +13,10 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.*;
 import javafx.scene.layout.*;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
-import javafx.scene.input.MouseEvent;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -60,6 +60,19 @@ public class JourneyUI {
     private ArrayList<City> redCities = new ArrayList<City>();
     private ArrayList<City> yellowCities = new ArrayList<City>();
     private ArrayList<City> greenCities = new ArrayList<City>();
+    private String[] cityDealOrder = new String[]{"Red, Green, Yellow", "Green, Yellow, Red", "Yellow, Red, Green"};
+    ImageView player1ImageView;
+    ImageView player2ImageView;
+    ImageView player3ImageView;
+    ImageView player4ImageView;
+    ImageView player5ImageView;
+    ImageView player6ImageView;
+    ImageView player1PieceImageView;
+    ImageView player2PieceImageView;
+    ImageView player3PieceImageView;
+    ImageView player4PieceImageView;
+    ImageView player5PieceImageView;
+    ImageView player6PieceImageView;
 
 
     private void setBoxSizes(){
@@ -158,7 +171,7 @@ public class JourneyUI {
         player1Label.setFont(font);
         final TextField player1Field = new TextField("Name");
         Image player1Flag = loadImage("flag_black.png");
-        ImageView player1ImageView = new ImageView(player1Flag);
+        player1ImageView = new ImageView(player1Flag);
         Button goButton = new Button("GO!");
         HBox player1Box = new HBox();
         VBox player1Buttons = new VBox();
@@ -182,7 +195,7 @@ public class JourneyUI {
         Label player2Label = new Label("Player 2");
         player2Label.setFont(font);
         Image player2Flag = loadImage("flag_white.png");
-        ImageView player2ImageView = new ImageView(player2Flag);
+        player2ImageView = new ImageView(player2Flag);
         HBox player2Box = new HBox();
         VBox player2Buttons = new VBox();
         ToggleGroup player2Group = new ToggleGroup();
@@ -202,7 +215,7 @@ public class JourneyUI {
         final TextField player3Field = new TextField("Name");
         player3Label.setFont(font);
         Image player3Flag = loadImage("flag_red.png");
-        ImageView player3ImageView = new ImageView(player3Flag);
+        player3ImageView = new ImageView(player3Flag);
         HBox player3Box = new HBox();
         VBox player3Buttons = new VBox();
         ToggleGroup player3Group = new ToggleGroup();
@@ -225,7 +238,7 @@ public class JourneyUI {
         final TextField player4Field = new TextField("Name");
         player4Label.setFont(font);
         Image player4Flag = loadImage("flag_yellow.png");
-        ImageView player4ImageView = new ImageView(player4Flag);
+        player4ImageView = new ImageView(player4Flag);
         HBox player4Box = new HBox();
         VBox player4Buttons = new VBox();
         ToggleGroup player4Group = new ToggleGroup();
@@ -248,7 +261,7 @@ public class JourneyUI {
         final TextField player5Field = new TextField("Name");
         player5Label.setFont(font);
         Image player5Flag = loadImage("flag_green.png");
-        ImageView player5ImageView = new ImageView(player5Flag);
+        player5ImageView = new ImageView(player5Flag);
         HBox player5Box = new HBox();
         VBox player5Buttons = new VBox();
         ToggleGroup player5Group = new ToggleGroup();
@@ -272,7 +285,7 @@ public class JourneyUI {
         player6Label.setFont(font);
         final TextField player6Field = new TextField("Name");
         Image player6Flag = loadImage("flag_blue.png");
-        ImageView player6ImageView = new ImageView(player6Flag);
+        player6ImageView = new ImageView(player6Flag);
         HBox player6Box = new HBox();
         VBox player6Buttons = new VBox();
         ToggleGroup player6Group = new ToggleGroup();
@@ -314,79 +327,71 @@ public class JourneyUI {
                     player1.setName(player1Field.getText());
                     System.out.println("Player 1's name is " + player1.getName());
                     currentPlayerLabel.setText(player1.getName());
-                    if(player1Computer.isSelected()){
+                    if (player1Computer.isSelected()) {
                         player1.setComputer(true);
-                    }
-                    else
+                    } else
                         player1.setHuman(true);
                     activePlayersList.add(player1);
-                    System.out.println(player1.isComputer());
                     player2.setName(player2Field.getText());
                     System.out.println("Player 2's name is " + player2.getName());
-                    if(player2Computer.isSelected()){
+                    if (player2Computer.isSelected()) {
                         player2.setComputer(true);
-                    }
-                    else
+                    } else
                         player2.setHuman(true);
                     activePlayersList.add(player2);
-                    if(!player3None.isSelected()){
+                    if (!player3None.isSelected()) {
                         activePlayers++;
                         leftPlayer3Box = new VBox();
                         player3 = new Player(player3Field.getText());
                         System.out.println("Player 3's name is " + player3.getName());
-                        if(player3Computer.isSelected()){
+                        if (player3Computer.isSelected()) {
                             player3.setComputer(true);
-                        }
-                        else
+                        } else
                             player3.setHuman(true);
                         activePlayersList.add(player3);
                     }
-                    if(!player4None.isSelected()){
+                    if (!player4None.isSelected()) {
                         activePlayers++;
                         leftPlayer4Box = new VBox();
                         player4 = new Player(player4Field.getText());
                         System.out.println("Player 4's name is " + player4.getName());
 
-                        if(player4Computer.isSelected()){
+                        if (player4Computer.isSelected()) {
                             player4.setComputer(true);
-                        }
-                        else
+                        } else
                             player4.setHuman(true);
                         activePlayersList.add(player4);
                     }
-                    if(!player5None.isSelected()){
+                    if (!player5None.isSelected()) {
                         activePlayers++;
                         leftPlayer5Box = new VBox();
                         player5 = new Player(player5Field.getText());
                         System.out.println("Player 5's name is " + player5.getName());
 
-                        if(player5Computer.isSelected()){
+                        if (player5Computer.isSelected()) {
                             player5.setComputer(true);
-                        }
-                        else
+                        } else
                             player5.setHuman(true);
                         activePlayersList.add(player5);
                     }
-                    if(!player6None.isSelected()){
+                    if (!player6None.isSelected()) {
                         activePlayers++;
                         leftPlayer6Box = new VBox();
                         player6 = new Player(player6Field.getText());
                         System.out.println("Player 6's name is " + player6.getName());
-                        if(player6Computer.isSelected()){
+                        if (player6Computer.isSelected()) {
                             player6.setComputer(true);
-                        }
-                        else
+                        } else
                             player6.setHuman(true);
                         activePlayersList.add(player6);
                     }
-
+                    gameSetup();
 
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
             }
         });
-
     }
 
     public void initGameScreen() throws FileNotFoundException, IOException{
@@ -400,24 +405,28 @@ public class JourneyUI {
         leftPlayer1Box.getChildren().add(currentPlayerLabel);
         setBoxSizes();
         gridPane1 = new AnchorPane();
+        gridPane1.setPrefSize(600,800);
         Image grid1Image = loadImage("grid1.jpg");
         final ImageView grid1ImageView = new ImageView(grid1Image);
         grid1ImageView.setFitHeight(800);
         grid1ImageView.setFitWidth(600);
         gridPane1.getChildren().addAll(grid1ImageView);
         gridPane2 = new AnchorPane();
+        gridPane2.setPrefSize(600,800);
         Image grid2Image = loadImage("grid2.jpg");
         final ImageView grid2ImageView = new ImageView(grid2Image);
         grid2ImageView.setFitHeight(800);
         grid2ImageView.setFitWidth(600);
         gridPane2.getChildren().addAll(grid2ImageView);
         gridPane3 = new AnchorPane();
+        gridPane3.setPrefSize(600,800);
         Image grid3Image = loadImage("grid3.jpg");
         final ImageView grid3ImageView = new ImageView(grid3Image);
         grid3ImageView.setFitHeight(800);
         grid3ImageView.setFitWidth(600);
         gridPane3.getChildren().addAll(grid3ImageView);
         gridPane4 = new AnchorPane();
+        gridPane4.setPrefSize(600,800);
         Image grid4Image = loadImage("grid4.jpg");
         final ImageView grid4ImageView = new ImageView(grid4Image);
         grid4ImageView.setFitHeight(800);
@@ -654,6 +663,8 @@ public class JourneyUI {
         gridPane1.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent event) {
+                System.out.println(event.getX());
+                System.out.println(event.getY());
                 for (int i = 0; i < cities.size(); i++) {
                     if((event.getX() + 20 >= cities.get(i).getxCoordinate() &&  event.getX() - 20 <= cities.get(i).getxCoordinate() &&
                             event.getY() + 20 >= cities.get(i).getyCoordinate() && event.getY() - 20 <= cities.get(i).getyCoordinate()) && cities.get(i).getQuarter() == 1){
@@ -673,6 +684,8 @@ public class JourneyUI {
         gridPane2.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent event) {
+                System.out.println(event.getX());
+                System.out.println(event.getY());
                 for (int i = 0; i < cities.size(); i++) {
                     if((event.getX() + 20 >= cities.get(i).getxCoordinate() &&  event.getX() - 20 <= cities.get(i).getxCoordinate() &&
                             event.getY() + 20 >= cities.get(i).getyCoordinate() && event.getY() - 20 <= cities.get(i).getyCoordinate()) && cities.get(i).getQuarter() == 2){
@@ -690,6 +703,8 @@ public class JourneyUI {
         gridPane3.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent event) {
+                System.out.println(event.getX());
+                System.out.println(event.getY());
                 for (int i = 0; i < cities.size(); i++) {
                     if((event.getX() + 20 >= cities.get(i).getxCoordinate() &&  event.getX() - 20 <= cities.get(i).getxCoordinate() &&
                             event.getY() + 20 >= cities.get(i).getyCoordinate() && event.getY() - 20 <= cities.get(i).getyCoordinate()) && cities.get(i).getQuarter() == 3){
@@ -707,6 +722,8 @@ public class JourneyUI {
         gridPane4.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent event) {
+                System.out.println(event.getX());
+                System.out.println(event.getY());
                 for (int i = 0; i < cities.size(); i++) {
                     if((event.getX() + 20 >= cities.get(i).getxCoordinate() &&  event.getX() - 20 <= cities.get(i).getxCoordinate() &&
                             event.getY() + 20 >= cities.get(i).getyCoordinate() && event.getY() - 20 <= cities.get(i).getyCoordinate() && cities.get(i).getQuarter() == 4)){
@@ -724,12 +741,588 @@ public class JourneyUI {
 
     }
     public void gameSetup(){
-        for (int i = 0; i < activePlayersList.size(); i++) {
-            int homeIndex = randomCityGenerator.nextInt(cities.size());
-            activePlayersList.get(i).setHomeCity(cities.get(homeIndex));
+        int redIndex = randomCityGenerator.nextInt(redCities.size());
+        int greenIndex = randomCityGenerator.nextInt(greenCities.size());
+        int yellowIndex = randomCityGenerator.nextInt(yellowCities.size());
+        player1.setHomeCity(redCities.get(redIndex));
+        player1ImageView.setFitHeight(75);
+        player1ImageView.setFitWidth(75);
+        player1PieceImageView = new ImageView(loadImage("piece_black.png"));
+        player1PieceImageView.setFitWidth(50);
+        player1PieceImageView.setFitHeight(50);
+
+        if(player1.getHomeCity().getQuarter() == 1){
+            player1ImageView.relocate(player1.getHomeCity().getxCoordinate(), player1.getHomeCity().getyCoordinate()-50);
+            player1PieceImageView.relocate(player1.getHomeCity().getxCoordinate() - 20, player1.getHomeCity().getyCoordinate()-42);
+            gridPane1.getChildren().add(player1ImageView);
+            gridPane1.getChildren().add(player1PieceImageView);
 
         }
+        else if(player1.getHomeCity().getQuarter()== 2){
+            player1ImageView.relocate(player1.getHomeCity().getxCoordinate(), player1.getHomeCity().getyCoordinate()-50);
+            player1PieceImageView.relocate(player1.getHomeCity().getxCoordinate() - 20, player1.getHomeCity().getyCoordinate()-42);
+
+            gridPane2.getChildren().add(player1ImageView);
+            gridPane2.getChildren().add(player1PieceImageView);
+        }
+        else if(player1.getHomeCity().getQuarter() == 3){
+
+            player1ImageView.relocate(player1.getHomeCity().getxCoordinate(), player1.getHomeCity().getyCoordinate()-50);
+            player1PieceImageView.relocate(player1.getHomeCity().getxCoordinate() - 20, player1.getHomeCity().getyCoordinate()-42);
+
+            gridPane3.getChildren().add(player1ImageView);
+            gridPane3.getChildren().add(player1PieceImageView);
+
+        }
+        else{
+
+            player1ImageView.relocate(player1.getHomeCity().getxCoordinate(), player1.getHomeCity().getyCoordinate()-50);
+            player1PieceImageView.relocate(player1.getHomeCity().getxCoordinate() - 20, player1.getHomeCity().getyCoordinate()-42);
+
+            if(player1ImageView.getY()<0){
+                player1ImageView.relocate(player1.getHomeCity().getxCoordinate(), 0);
+            }
+            else if(player1ImageView.getX()>350){
+                player1ImageView.relocate(350, player1.getHomeCity().getyCoordinate()-50);
+            }
+
+            gridPane4.getChildren().add(player1ImageView);
+            gridPane4.getChildren().add(player1PieceImageView);
+
+        }
+        player1.getDestinations().add(redCities.get(redIndex));
+        player1.getDestinations().add(greenCities.get(greenIndex));
+        player1.getDestinations().add(yellowCities.get(yellowIndex));
+
+        player2.setHomeCity(greenCities.get(randomCityGenerator.nextInt(greenCities.size())));
+        player2.getDestinations().add(player2.getHomeCity());
+        player2.getDestinations().add(yellowCities.get(randomCityGenerator.nextInt(yellowCities.size())));
+        player2.getDestinations().add(redCities.get(randomCityGenerator.nextInt(redCities.size())));
+        player2ImageView.setFitHeight(75);
+        player2ImageView.setFitWidth(75);
+
+        player2PieceImageView = new ImageView(loadImage("piece_white.png"));
+        player2PieceImageView.setFitHeight(50);
+        player2PieceImageView.setFitWidth(50);
+        if(player2.getHomeCity().getQuarter() == 1){
+
+            player2ImageView.relocate(player2.getHomeCity().getxCoordinate(), player2.getHomeCity().getyCoordinate()-50);
+
+            gridPane1.getChildren().add(player2ImageView);
+            player2PieceImageView.relocate(player2.getHomeCity().getxCoordinate() - 20, player2.getHomeCity().getyCoordinate()-42);
+            gridPane1.getChildren().add(player2PieceImageView);
+
+
+        }
+        else if(player2.getHomeCity().getQuarter()== 2){
+
+
+            player2ImageView.relocate(player2.getHomeCity().getxCoordinate(), player2.getHomeCity().getyCoordinate()-50);
+            gridPane2.getChildren().add(player2ImageView);
+            player2PieceImageView.relocate(player2.getHomeCity().getxCoordinate() - 20, player2.getHomeCity().getyCoordinate()-42);
+            gridPane2.getChildren().add(player2PieceImageView);
+
+        }
+        else if(player2.getHomeCity().getQuarter() == 3){
+
+            player2ImageView.relocate(player2.getHomeCity().getxCoordinate(), player2.getHomeCity().getyCoordinate()-50);
+
+            gridPane3.getChildren().add(player2ImageView);
+            player2PieceImageView.relocate(player2.getHomeCity().getxCoordinate() - 20, player2.getHomeCity().getyCoordinate()-42);
+            gridPane3.getChildren().add(player2PieceImageView);
+
+        }
+        else{
+
+            player2ImageView.relocate(player2.getHomeCity().getxCoordinate(), player2.getHomeCity().getyCoordinate()-50);
+            if(player2ImageView.getY()<0){
+                player2ImageView.relocate(player2.getHomeCity().getxCoordinate(), 0);
+            }
+            else if(player2ImageView.getX()>350){
+                player2ImageView.relocate(350, player2.getHomeCity().getyCoordinate()-50);
+            }
+
+            gridPane4.getChildren().add(player2ImageView);
+            player2PieceImageView.relocate(player2.getHomeCity().getxCoordinate() - 20, player2.getHomeCity().getyCoordinate()-42);
+            gridPane4.getChildren().add(player2PieceImageView);
+
+        }
+        if(player3 != null){
+            player3.setHomeCity(yellowCities.get(randomCityGenerator.nextInt(yellowCities.size())));
+            player3.getDestinations().add(player3.getHomeCity());
+            player3.getDestinations().add(redCities.get(randomCityGenerator.nextInt(redCities.size())));
+            player3.getDestinations().add(greenCities.get(randomCityGenerator.nextInt(greenCities.size())));
+            player3ImageView.setFitHeight(75);
+            player3ImageView.setFitWidth(75);
+            player3PieceImageView = new ImageView(loadImage("piece_red.png"));
+            player3PieceImageView.setFitHeight(50);
+            player3PieceImageView.setFitWidth(50);
+            player3PieceImageView.relocate(player3.getHomeCity().getxCoordinate() - 20, player3.getHomeCity().getyCoordinate()-42);
+            player3ImageView.relocate(player3.getHomeCity().getxCoordinate(), player3.getHomeCity().getyCoordinate()-50);
+            if(player3ImageView.getY()<0){
+                player3ImageView.relocate(player3.getHomeCity().getxCoordinate(), 0);
+            }
+            else if(player3ImageView.getX()>350){
+                player3ImageView.relocate(350, player3.getHomeCity().getyCoordinate()-50);
+            }
+
+            if(player3.getHomeCity().getQuarter() == 1){
+                gridPane1.getChildren().add(player3ImageView);
+                gridPane1.getChildren().add(player3PieceImageView);
+            }
+            else if(player3.getHomeCity().getQuarter()== 2){
+                gridPane2.getChildren().add(player3ImageView);
+                gridPane2.getChildren().add(player3PieceImageView);
+            }
+            else if(player3.getHomeCity().getQuarter() == 3){
+                gridPane3.getChildren().add(player3ImageView);
+                gridPane3.getChildren().add(player3PieceImageView);
+            }
+            else{
+                gridPane4.getChildren().add(player3ImageView);
+                gridPane4.getChildren().add(player3PieceImageView);
+            }
+        }
+        if(player4!=null){
+            player4.setHomeCity(redCities.get(randomCityGenerator.nextInt(redCities.size())));
+            player4.getDestinations().add(player4.getHomeCity());
+            player4.getDestinations().add(greenCities.get(randomCityGenerator.nextInt(greenCities.size())));
+            player4.getDestinations().add(yellowCities.get(randomCityGenerator.nextInt(yellowCities.size())));
+            player4ImageView.setFitHeight(75);
+            player4ImageView.setFitWidth(75);
+            player4PieceImageView = new ImageView(loadImage("piece_yellow.png"));
+            player4PieceImageView.relocate(player4.getHomeCity().getxCoordinate() - 20, player4.getHomeCity().getyCoordinate() - 42);
+            player4PieceImageView.setFitHeight(50);
+            player4PieceImageView.setFitWidth(50);
+            player4ImageView.relocate(player4.getHomeCity().getxCoordinate(), player4.getHomeCity().getyCoordinate()-50);
+            if(player4ImageView.getY()<0){
+                player4ImageView.relocate(player4.getHomeCity().getxCoordinate(), 0);
+            }
+            else if(player4ImageView.getX()>350){
+                player4ImageView.relocate(350, player4.getHomeCity().getyCoordinate()-50);
+            }
+            if(player4.getHomeCity().getQuarter() == 1){
+                gridPane1.getChildren().add(player4ImageView);
+                gridPane1.getChildren().add(player4PieceImageView);
+            }
+            else if(player4.getHomeCity().getQuarter()== 2){
+                gridPane2.getChildren().add(player4ImageView);
+                gridPane2.getChildren().add(player4PieceImageView);
+            }
+            else if(player4.getHomeCity().getQuarter() == 3){
+                gridPane3.getChildren().add(player4ImageView);
+                gridPane3.getChildren().add(player4PieceImageView);
+            }
+            else{
+                gridPane4.getChildren().add(player4ImageView);
+                gridPane4.getChildren().add(player4PieceImageView);
+            }
+        }
+        if(player5!=null){
+            player5.setHomeCity(greenCities.get(randomCityGenerator.nextInt(greenCities.size())));
+            player5.getDestinations().add(player5.getHomeCity());
+            player5.getDestinations().add(yellowCities.get(randomCityGenerator.nextInt(yellowCities.size())));
+            player5.getDestinations().add(redCities.get(randomCityGenerator.nextInt(redCities.size())));
+            player5ImageView.setFitHeight(75);
+            player5ImageView.setFitWidth(75);
+            player5PieceImageView = new ImageView(loadImage("piece_green.png"));
+            player5PieceImageView.setFitHeight(50);
+            player5PieceImageView.setFitWidth(50);
+            player5PieceImageView.relocate(player5.getHomeCity().getxCoordinate() - 20, player5.getHomeCity().getyCoordinate()-42);
+            player5ImageView.relocate(player5.getHomeCity().getxCoordinate(), player5.getHomeCity().getyCoordinate()-50);
+
+
+            if(player5ImageView.getY()<0){
+                player5ImageView.relocate(player5.getHomeCity().getxCoordinate(), 0);
+            }
+            else if(player5ImageView.getX()>350){
+                player5ImageView.relocate(350, player5.getHomeCity().getyCoordinate()-50);
+            }
+
+
+            if(player5.getHomeCity().getQuarter() == 1){
+
+
+                gridPane1.getChildren().add(player5ImageView);
+                gridPane1.getChildren().add(player5PieceImageView);
+
+            }
+            else if(player5.getHomeCity().getQuarter()== 2){
+
+                gridPane2.getChildren().add(player5ImageView);
+                gridPane2.getChildren().add(player5PieceImageView);
+
+
+            }
+            else if(player5.getHomeCity().getQuarter() == 3){
+
+
+                gridPane3.getChildren().add(player5ImageView);
+                gridPane3.getChildren().add(player5PieceImageView);
+
+
+            }
+            else{
+
+                gridPane4.getChildren().add(player5ImageView);
+                gridPane4.getChildren().add(player5PieceImageView);
+
+
+            }
+        }
+        if(player6!=null){
+            player6.setHomeCity(yellowCities.get(randomCityGenerator.nextInt(yellowCities.size())));
+            player6.getDestinations().add(player6.getHomeCity());
+            player6.getDestinations().add(redCities.get(randomCityGenerator.nextInt(redCities.size())));
+            player6.getDestinations().add(greenCities.get(randomCityGenerator.nextInt(greenCities.size())));
+            player6ImageView.setFitHeight(75);
+            player6ImageView.setFitWidth(75);
+            player6PieceImageView = new ImageView(loadImage("piece_blue.png"));
+            player6PieceImageView.setFitHeight(50);
+            player6PieceImageView.setFitWidth(50);
+            player6PieceImageView.relocate(player6.getHomeCity().getxCoordinate()-20, player6.getHomeCity().getyCoordinate()-42);
+            player6ImageView.relocate(player6.getHomeCity().getxCoordinate(), player6.getHomeCity().getyCoordinate()-50);
+            if(player6ImageView.getY()<0){
+                player6ImageView.relocate(player6.getHomeCity().getxCoordinate(), 0);
+            }
+            else if(player6ImageView.getX()>350){
+                player6ImageView.relocate(350, player6.getHomeCity().getyCoordinate()-50);
+            }
+            if(player6.getHomeCity().getQuarter() == 1){
+                gridPane1.getChildren().add(player6ImageView);
+                gridPane1.getChildren().add(player6PieceImageView);
+            }
+            else if(player6.getHomeCity().getQuarter()== 2){
+                gridPane2.getChildren().add(player6ImageView);
+                gridPane2.getChildren().add(player6PieceImageView);
+            }
+            else if(player6.getHomeCity().getQuarter() == 3){
+                gridPane3.getChildren().add(player6ImageView);
+                gridPane3.getChildren().add(player6PieceImageView);
+            }
+            else{
+                gridPane4.getChildren().add(player6ImageView);
+                gridPane4.getChildren().add(player6PieceImageView);
+            }
+        }
+        for (int i = 0; i < activePlayersList.size(); i++) {
+            System.out.println("Player " + (i + 1) + "'s cities are:");
+            System.out.println("Home City " + activePlayersList.get(i).getHomeCity().getName());
+            System.out.println(activePlayersList.get(i).getDestinations().get(1).getName());
+            System.out.println(activePlayersList.get(i).getDestinations().get(2).getName());
+        }
+        movePlayers();
     }
+    public void movePlayers(){
+        player1PieceImageView.setOnDragDetected(new EventHandler<MouseEvent>() {
+            public void handle(MouseEvent event) {
+                /* drag was detected, start drag-and-drop gesture*/
+                System.out.println("onDragDetected");
+
+                /* allow any transfer mode */
+                Dragboard db = player1ImageView.startDragAndDrop(TransferMode.MOVE);
+                ClipboardContent content = new ClipboardContent();
+                Image sourceImage = player1PieceImageView.getImage();
+                content.putImage(sourceImage);
+                db.setContent(content);
+                event.consume();
+            }
+        });
+        player2PieceImageView.setOnDragDetected(new EventHandler<MouseEvent>() {
+            public void handle(MouseEvent event) {
+                /* drag was detected, start drag-and-drop gesture*/
+                System.out.println("onDragDetected");
+
+                /* allow any transfer mode */
+                Dragboard db = player2ImageView.startDragAndDrop(TransferMode.MOVE);
+                ClipboardContent content = new ClipboardContent();
+                Image sourceImage = player2PieceImageView.getImage();
+                content.putImage(sourceImage);
+                db.setContent(content);
+                event.consume();
+            }
+        });
+        if(player3!=null){
+        player3PieceImageView.setOnDragDetected(new EventHandler<MouseEvent>() {
+            public void handle(MouseEvent event) {
+                /* drag was detected, start drag-and-drop gesture*/
+                System.out.println("onDragDetected");
+
+                /* allow any transfer mode */
+                Dragboard db = player3ImageView.startDragAndDrop(TransferMode.MOVE);
+                ClipboardContent content = new ClipboardContent();
+                Image sourceImage = player3PieceImageView.getImage();
+                content.putImage(sourceImage);
+                db.setContent(content);
+                event.consume();
+            }
+        });}
+        if(player4!=null){
+        player4PieceImageView.setOnDragDetected(new EventHandler<MouseEvent>() {
+            public void handle(MouseEvent event) {
+                /* drag was detected, start drag-and-drop gesture*/
+                System.out.println("onDragDetected");
+
+                /* allow any transfer mode */
+                Dragboard db = player4ImageView.startDragAndDrop(TransferMode.MOVE);
+                ClipboardContent content = new ClipboardContent();
+                Image sourceImage = player4PieceImageView.getImage();
+                content.putImage(sourceImage);
+                db.setContent(content);
+                event.consume();
+            }
+        });}
+        if(player5!=null){
+            player5PieceImageView.setOnDragDetected(new EventHandler<MouseEvent>() {
+                public void handle(MouseEvent event) {
+                /* drag was detected, start drag-and-drop gesture*/
+                    System.out.println("onDragDetected");
+
+                /* allow any transfer mode */
+                    Dragboard db = player5ImageView.startDragAndDrop(TransferMode.MOVE);
+                    ClipboardContent content = new ClipboardContent();
+                    Image sourceImage = player5PieceImageView.getImage();
+                    content.putImage(sourceImage);
+                    db.setContent(content);
+                    event.consume();
+                }
+            });
+        }
+        if(player6!=null){
+            player6PieceImageView.setOnDragDetected(new EventHandler<MouseEvent>() {
+                public void handle(MouseEvent event) {
+                /* drag was detected, start drag-and-drop gesture*/
+                    System.out.println("onDragDetected");
+
+                /* allow any transfer mode */
+                    Dragboard db = player6ImageView.startDragAndDrop(TransferMode.MOVE);
+                    ClipboardContent content = new ClipboardContent();
+                    Image sourceImage = player6PieceImageView.getImage();
+                    content.putImage(sourceImage);
+                    db.setContent(content);
+                    event.consume();
+                }
+            });
+        }
+        gridPane1.setOnDragOver(new EventHandler <DragEvent>() {
+            @Override
+            public void handle(DragEvent event) {
+
+                Dragboard db = event.getDragboard();
+
+                if(db.hasImage()){
+                    event.acceptTransferModes(TransferMode.MOVE);
+                }
+
+                event.consume();
+            }
+        });
+        gridPane1.setOnDragDropped(new EventHandler<DragEvent>() {
+            @Override
+            public void handle(DragEvent event) {
+                Dragboard db = event.getDragboard();
+                System.out.println(db.getImage().getHeight());
+                System.out.println(player1PieceImageView.getImage().getHeight());
+                if(db.hasImage()) {
+                    if(db.getImage().getHeight() == player1PieceImageView.getImage().getHeight()) {
+                        gridPane1.getChildren().remove(player1PieceImageView);
+                        player1PieceImageView.relocate(event.getX() - 20, event.getY() - 25);
+                        gridPane1.getChildren().add(player1PieceImageView);
+                    }
+                    else if(db.getImage().getHeight() == player2PieceImageView.getImage().getHeight()){
+                        gridPane1.getChildren().remove(player2PieceImageView);
+                        player2PieceImageView.relocate(event.getX() - 20, event.getY() - 25);
+                        gridPane1.getChildren().add(player2PieceImageView);
+                    }
+                    else if(db.getImage().getHeight() == player3PieceImageView.getImage().getHeight()) {
+                        gridPane1.getChildren().remove(player3PieceImageView);
+                        player3PieceImageView.relocate(event.getX() - 20, event.getY() - 25);
+                        gridPane1.getChildren().add(player3PieceImageView);
+                    }
+                    else if (db.getImage().getHeight() == player4PieceImageView.getImage().getHeight()){
+                        gridPane1.getChildren().remove(player4PieceImageView);
+                        player4PieceImageView.relocate(event.getX() - 20, event.getY() - 25);
+                        gridPane1.getChildren().add(player4PieceImageView);
+                    }
+                    else if (db.getImage().getHeight() == player5PieceImageView.getImage().getHeight()){
+                        gridPane1.getChildren().remove(player5PieceImageView);
+                        player5PieceImageView.relocate(event.getX() - 20, event.getY() - 25);
+                        gridPane1.getChildren().add(player5PieceImageView);
+                    }
+                    else {
+                        gridPane1.getChildren().remove(player6PieceImageView);
+                        player6PieceImageView.relocate(event.getX() - 20, event.getY() - 25);
+                        gridPane1.getChildren().add(player6PieceImageView);
+                    }
+
+                }
+            }
+        });
+        gridPane2.setOnDragOver(new EventHandler <DragEvent>() {
+            @Override
+            public void handle(DragEvent event) {
+
+                Dragboard db = event.getDragboard();
+
+                if(db.hasImage()){
+                    event.acceptTransferModes(TransferMode.MOVE);
+                }
+
+                event.consume();
+            }
+        });
+        gridPane2.setOnDragDropped(new EventHandler<DragEvent>() {
+            @Override
+            public void handle(DragEvent event) {
+                Dragboard db = event.getDragboard();
+                System.out.println(db.getImage().getHeight());
+                System.out.println(player1PieceImageView.getImage().getHeight());
+                if(db.hasImage()) {
+                    if(db.getImage().getHeight() == player1PieceImageView.getImage().getHeight()) {
+                        gridPane2.getChildren().remove(player1PieceImageView);
+                        player1PieceImageView.relocate(event.getX() - 20, event.getY() - 25);
+                        gridPane2.getChildren().add(player1PieceImageView);
+                    }
+                    else if(db.getImage().getHeight() == player2PieceImageView.getImage().getHeight()){
+                        gridPane2.getChildren().remove(player2PieceImageView);
+                        player2PieceImageView.relocate(event.getX() - 20, event.getY() - 25);
+                        gridPane2.getChildren().add(player2PieceImageView);
+                    }
+                    else if(db.getImage().getHeight() == player3PieceImageView.getImage().getHeight()) {
+                        gridPane2.getChildren().remove(player3PieceImageView);
+                        player3PieceImageView.relocate(event.getX() - 20, event.getY() - 25);
+                        gridPane2.getChildren().add(player3PieceImageView);
+                    }
+                    else if (db.getImage().getHeight() == player4PieceImageView.getImage().getHeight()){
+                        gridPane2.getChildren().remove(player4PieceImageView);
+                        player4PieceImageView.relocate(event.getX() - 20, event.getY() - 25);
+                        gridPane2.getChildren().add(player4PieceImageView);
+                    }
+                    else if (db.getImage().getHeight() == player5PieceImageView.getImage().getHeight()){
+                        gridPane2.getChildren().remove(player5PieceImageView);
+                        player5PieceImageView.relocate(event.getX() - 20, event.getY() - 25);
+                        gridPane2.getChildren().add(player5PieceImageView);
+                    }
+                    else {
+                        gridPane2.getChildren().remove(player6PieceImageView);
+                        player6PieceImageView.relocate(event.getX() - 20, event.getY() - 25);
+                        gridPane2.getChildren().add(player6PieceImageView);
+                    }
+
+                }
+            }
+        });
+        gridPane3.setOnDragOver(new EventHandler <DragEvent>() {
+            @Override
+            public void handle(DragEvent event) {
+
+                Dragboard db = event.getDragboard();
+
+                if(db.hasImage()){
+                    event.acceptTransferModes(TransferMode.MOVE);
+                }
+
+                event.consume();
+            }
+        });
+        gridPane3.setOnDragDropped(new EventHandler<DragEvent>() {
+            @Override
+            public void handle(DragEvent event) {
+                Dragboard db = event.getDragboard();
+                System.out.println(db.getImage().getHeight());
+                System.out.println(player1PieceImageView.getImage().getHeight());
+                if(db.hasImage()) {
+                    if(db.getImage().getHeight() == player1PieceImageView.getImage().getHeight()) {
+                        gridPane3.getChildren().remove(player1PieceImageView);
+                        player1PieceImageView.relocate(event.getX() - 20, event.getY() - 25);
+                        gridPane3.getChildren().add(player1PieceImageView);
+                    }
+                    else if(db.getImage().getHeight() == player2PieceImageView.getImage().getHeight()){
+                        gridPane3.getChildren().remove(player2PieceImageView);
+                        player2PieceImageView.relocate(event.getX() - 20, event.getY() - 25);
+                        gridPane3.getChildren().add(player2PieceImageView);
+                    }
+                    else if(db.getImage().getHeight() == player3PieceImageView.getImage().getHeight()) {
+                        gridPane3.getChildren().remove(player3PieceImageView);
+                        player3PieceImageView.relocate(event.getX() - 20, event.getY() - 25);
+                        gridPane3.getChildren().add(player3PieceImageView);
+                    }
+                    else if (db.getImage().getHeight() == player4PieceImageView.getImage().getHeight()){
+                        gridPane3.getChildren().remove(player4PieceImageView);
+                        player4PieceImageView.relocate(event.getX() - 20, event.getY() - 25);
+                        gridPane3.getChildren().add(player4PieceImageView);
+                    }
+                    else if (db.getImage().getHeight() == player5PieceImageView.getImage().getHeight()){
+                        gridPane3.getChildren().remove(player5PieceImageView);
+                        player5PieceImageView.relocate(event.getX() - 20, event.getY() - 25);
+                        gridPane3.getChildren().add(player5PieceImageView);
+                    }
+                    else {
+                        gridPane3.getChildren().remove(player6PieceImageView);
+                        player6PieceImageView.relocate(event.getX() - 20, event.getY() - 25);
+                        gridPane3.getChildren().add(player6PieceImageView);
+                    }
+
+                }
+            }
+        });
+        gridPane4.setOnDragOver(new EventHandler <DragEvent>() {
+            @Override
+            public void handle(DragEvent event) {
+
+                Dragboard db = event.getDragboard();
+
+                if(db.hasImage()){
+                    event.acceptTransferModes(TransferMode.MOVE);
+                }
+
+                event.consume();
+            }
+        });
+        gridPane4.setOnDragDropped(new EventHandler<DragEvent>() {
+            @Override
+            public void handle(DragEvent event) {
+                Dragboard db = event.getDragboard();
+                System.out.println(db.getImage().getHeight());
+                System.out.println(player1PieceImageView.getImage().getHeight());
+                if(db.hasImage()) {
+                    if(db.getImage().getHeight() == player1PieceImageView.getImage().getHeight()) {
+                        gridPane4.getChildren().remove(player1PieceImageView);
+                        player1PieceImageView.relocate(event.getX() - 20, event.getY() - 25);
+                        gridPane4.getChildren().add(player1PieceImageView);
+                    }
+                    else if(db.getImage().getHeight() == player2PieceImageView.getImage().getHeight()){
+                        gridPane4.getChildren().remove(player2PieceImageView);
+                        player2PieceImageView.relocate(event.getX() - 20, event.getY() - 25);
+                        gridPane4.getChildren().add(player2PieceImageView);
+                    }
+                    else if(db.getImage().getHeight() == player3PieceImageView.getImage().getHeight()) {
+                        gridPane4.getChildren().remove(player3PieceImageView);
+                        player3PieceImageView.relocate(event.getX() - 20, event.getY() - 25);
+                        gridPane4.getChildren().add(player3PieceImageView);
+                    }
+                    else if (db.getImage().getHeight() == player4PieceImageView.getImage().getHeight()){
+                        gridPane4.getChildren().remove(player4PieceImageView);
+                        player4PieceImageView.relocate(event.getX() - 20, event.getY() - 25);
+                        gridPane4.getChildren().add(player4PieceImageView);
+                    }
+                    else if (db.getImage().getHeight() == player5PieceImageView.getImage().getHeight()){
+                        gridPane4.getChildren().remove(player5PieceImageView);
+                        player5PieceImageView.relocate(event.getX() - 20, event.getY() - 25);
+                        gridPane4.getChildren().add(player5PieceImageView);
+                    }
+                    else {
+                        gridPane4.getChildren().remove(player6PieceImageView);
+                        player6PieceImageView.relocate(event.getX() - 20, event.getY() - 25);
+                        gridPane4.getChildren().add(player6PieceImageView);
+                    }
+
+                }
+            }
+        });
+
+    }
+
 
     public void switchScreenRequest(String screenName) throws IOException{
         int caseNum = 0;
