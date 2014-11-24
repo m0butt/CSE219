@@ -15,7 +15,6 @@ public class Main extends Application{
         try {
             JourneyUI root = new JourneyUI();
             BorderPane mainPane = root.GetMainPane();
-            root.SetStage(primaryStage);
             Scene scene = new Scene(mainPane, mainPane.getWidth(), mainPane.getHeight());
             primaryStage.setScene(scene);
             primaryStage.show();

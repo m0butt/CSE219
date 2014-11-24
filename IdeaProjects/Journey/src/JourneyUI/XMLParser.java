@@ -1,35 +1,42 @@
 package JourneyUI;
 
-import org.w3c.dom.Document;
-import org.w3c.dom.NodeList;
-import org.xml.sax.SAXException;
-
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
+import org.xml.sax.SAXException;
+
+import java.io.*;
 import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.soap.Node;
-import java.io.File;
+import org.w3c.dom.Document;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+
 import java.io.IOException;
 
-/**
- * Created by omar on 11/22/14.
- */
+
 public class XMLParser {
-    public void action(){
-        try {
+
+	public static void main(String[] args) {
+		try {
+            File file = new File("bro.txt");
+            if (!file.exists()) {
+                file.createNewFile();
+            }
+            FileWriter fw = new FileWriter(file.getAbsoluteFile());
+            BufferedWriter bw = new BufferedWriter(fw);
+
             DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
-            DocumentBuilder db = dbf.newDocumentBuilder();
-            Document doc = db.parse(new File("cities.xml"));
-            org.w3c.dom.Node root = doc.getElementsByTagName("routes").item(0);
-            NodeList cardlist = root.getChildNodes();
-            for (int i = 0; i < cardlist.getLength(); i++) {
-                org.w3c.dom.Node cardNode = cardlist.item(i);
-                if (cardNode.getNodeType() == Node.ELEMENT_NODE) {
-                    NodeList cardAttrs = cardNode.getChildNodes();
-                    // one card
-                    for (int j = 0; j < cardAttrs.getLength(); j++) {
-                        if (cardAttrs.item(j).getNodeType() == Node.ELEMENT_NODE) {
-                            org.w3c.dom.Node theNode = cardAttrs.item(j);
+			DocumentBuilder db = dbf.newDocumentBuilder();
+			Document doc = db.parse(new File("cities.xml"));
+			Node root = doc.getElementsByTagName("routes").item(0);
+			NodeList cardlist = root.getChildNodes();
+			for (int i = 0; i < cardlist.getLength(); i++) {
+				Node cardNode = cardlist.item(i);
+				if (cardNode.getNodeType() == Node.ELEMENT_NODE) {
+					NodeList cardAttrs = cardNode.getChildNodes();
+					// one card
+					for (int j = 0; j < cardAttrs.getLength(); j++) {
+						if (cardAttrs.item(j).getNodeType() == Node.ELEMENT_NODE) {
+							Node theNode = cardAttrs.item(j);
                             String s = theNode.getNodeName();
                             if (s.equals("name")) {
                                 System.out.println("City name: "
@@ -56,19 +63,17 @@ public class XMLParser {
                                 }
 
                             }
-                        }
-                    }
-                }
-            }
+						}
+					}
+				}
+			}
 
-        } catch (ParserConfigurationException e) {
-            e.printStackTrace();
-        } catch (SAXException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
+		} catch (ParserConfigurationException e) {
+			e.printStackTrace();
+		} catch (SAXException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
     }
-
 }

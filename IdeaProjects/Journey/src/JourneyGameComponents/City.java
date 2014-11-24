@@ -1,6 +1,9 @@
 package JourneyGameComponents;
 
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
+import java.util.Scanner;
 
 /**
  * Created by omar on 11/10/14.
@@ -11,7 +14,8 @@ public class City {
     String color;
     String name;
     int quarter;
-    ArrayList<City> neighboringCities;
+    ArrayList<String> neighboringCityNames = new ArrayList<String>();
+    ArrayList<String> seaNeighbours = new ArrayList<String>();
     boolean occupied;
     boolean isSeaPort;
     boolean isAirPort;
@@ -57,12 +61,41 @@ public class City {
         this.quarter = quarter;
     }
 
-    public ArrayList<City> getNeighboringCities() {
-        return neighboringCities;
+    //public ArrayList<City> getNeighboringCities() {
+        //return neighboringCities;
+    //
+    //}
+
+    public ArrayList<String> getNeighboringCityNames(){
+        return this.neighboringCityNames;
     }
 
-    public void setNeighboringCities(ArrayList<City> neighboringCities) {
-        this.neighboringCities = neighboringCities;
+    public void setNeighboringCities() throws FileNotFoundException {
+        ArrayList<String> arrayList = new ArrayList<String>();
+        File f = new File("bro.txt");
+        Scanner s = new Scanner(f);
+        while(s.hasNextLine()){
+            arrayList.add(s.nextLine());
+        }
+        String temp = "";
+        for (int i = 0; i < arrayList.size(); i++) {
+            if(arrayList.get(i).contains("City name: ")){
+                temp = arrayList.get(i).substring(arrayList.get(i).indexOf(":") + 2);
+            }
+            else if(arrayList.get(i).contains("Land neighbour: ")){
+                if(this.getName().equals(temp)){
+                    neighboringCityNames.add(arrayList.get(i).substring(arrayList.get(i).indexOf(":") + 2));
+
+                }
+            }
+            else if(arrayList.get(i).contains("Sea neighbour: ")){
+                if(this.getName().equals(temp)){
+                    seaNeighbours.add(arrayList.get(i).substring(arrayList.get(i).indexOf(":") + 2));
+                }
+            }
+
+        }
+
     }
 
     public boolean isOccupied() {
@@ -96,6 +129,9 @@ public class City {
     public void setHasRules(boolean hasRules) {
         this.hasRules = hasRules;
     }
+
+
+
 
 
     public City(){}
