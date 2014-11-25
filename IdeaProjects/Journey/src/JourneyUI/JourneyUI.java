@@ -5,6 +5,7 @@ package JourneyUI;
  */
 import JourneyGameComponents.City;
 import JourneyGameComponents.Player;
+import javafx.animation.*;
 import javafx.event.*;
 import javafx.geometry.Pos;
 import javafx.scene.control.*;
@@ -18,7 +19,7 @@ import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
 import javafx.scene.text.Font;
-import javafx.stage.Stage;
+import javafx.util.Duration;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -43,11 +44,14 @@ public class JourneyUI {
     private AnchorPane gridPane4;
     private Label points = new Label();
     private VBox leftPlayer1Box = new VBox();
+
     private VBox leftPlayer2Box = new VBox();
-    private VBox leftPlayer3Box;
+    private VBox leftPlayer3Box = new VBox();
     private VBox leftPlayer4Box;
     private VBox leftPlayer5Box;
     private VBox leftPlayer6Box;
+
+
     private final int MAX = 6;
     private int faceValue;
     private int activePlayers = 2;
@@ -62,7 +66,6 @@ public class JourneyUI {
     private ArrayList<City> redCities = new ArrayList<City>();
     private ArrayList<City> yellowCities = new ArrayList<City>();
     private ArrayList<City> greenCities = new ArrayList<City>();
-    private String[] cityDealOrder = new String[]{"Red, Green, Yellow", "Green, Yellow, Red", "Yellow, Red, Green"};
     ImageView player1ImageView;
     ImageView player2ImageView;
     ImageView player3ImageView;
@@ -70,22 +73,30 @@ public class JourneyUI {
     ImageView player5ImageView;
     ImageView player6ImageView;
     private int currentPlayerPoints;
-    boolean canMove = false;
+    private int currentPlayerTurn = 0;
+    ImageView currentPlayerPiece;
+    Player currentPlayer;
+    private int currentPlayerIndex = 0;
+    private Label currentPlayerLabel = new Label("Player 1");
+    private boolean canMove = false;
+    private boolean isRightPiece = false;
 
 
-    private ArrayList<ImageView> playerFlagImageViews = new ArrayList<ImageView>();
-    private ArrayList<ImageView> playerPieceImageViews = new ArrayList<ImageView>();
+    private ArrayList<ImageView> playerFlagImageViews = new ArrayList<>();
+    private ArrayList<ImageView> playerPieceImageViews = new ArrayList<>();
     private ArrayList<ImageView> cityImageViews = new ArrayList<>();
     private String[] colorStrings = {"black", "white", "red", "yellow", "green", "blue"};
-    int numCities = 2;
+    private int numCities = 2;
 
 
-    private void setBoxSizes() {
-        leftPlayer1Box.setPrefSize(200, 800);
+    private void setBoxSizes(VBox box) {
+        box.setPrefSize(300, 800);
+        box.setMaxHeight(800);
+        box.setMaxWidth(300);
 
     }
 
-    private Label currentPlayerLabel = new Label("Player 1");
+
 
 
     public GridPane getGamePane() {
@@ -108,7 +119,7 @@ public class JourneyUI {
 
     public void initSplashScreen() {
         splashScreenPane = new StackPane();
-        splashScreenPane.setPrefSize(1000, 1000);
+        splashScreenPane.setPrefSize(1300, 1300);
         // INIT THE SPLASH SCREEN CONTROLS
         String splashScreenImagePath = "splash.jpg";
         Image splashScreenImage = loadImage(splashScreenImagePath);
@@ -118,7 +129,7 @@ public class JourneyUI {
         //splashScreenImageView.resize(800,800);
 
         Label splashScreenImageLabel = new Label();
-        splashScreenImageLabel.resize(1000, 1000);
+        splashScreenImageLabel.resize(1300, 1300);
         splashScreenImageLabel.setAlignment(Pos.CENTER);
         splashScreenImageLabel.setGraphic(splashScreenImageView);
 
@@ -312,7 +323,7 @@ public class JourneyUI {
 
         selectPlayersParentPane = new BorderPane();
         selectPlayersPane = new GridPane();
-        selectPlayersPane.setPrefSize(1000, 1000);
+        selectPlayersPane.setPrefSize(1300, 1300);
         selectPlayersPane.setAlignment(Pos.CENTER);
         selectPlayersPane.setGridLinesVisible(true);
         selectPlayersPane.setVisible(true);
@@ -346,9 +357,11 @@ public class JourneyUI {
                         player2.setHuman(true);
                     activePlayersList.add(player2);
                     if (!player3None.isSelected()) {
+                        System.out.println("player 3 none is not selected");
                         activePlayers++;
                         leftPlayer3Box = new VBox();
                         player3 = new Player(player3Field.getText());
+                        System.out.println("player 3 is: " + player3);
                         System.out.println("Player 3's name is " + player3.getName());
                         if (player3Computer.isSelected()) {
                             player3.setComputer(true);
@@ -398,28 +411,18 @@ public class JourneyUI {
                         playerPieceImageViews.get(i).setStyle("-fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.8), 10, 0, 0, 0);");
                     }
                     for (int i = 0; i < cities.size(); i++) {
-                        System.out.println("running");
-                        System.out.println(cities.get(i));
                         if(cities.get(i).getColor().equalsIgnoreCase("green")){
-                            System.out.println("adding green");
-                            System.out.println(cities.get(i).getName());
                             cityImageViews.add(new ImageView("images/green/" +cities.get(i).getName() + ".jpg"));
                         }
                         else if(cities.get(i).getColor().equalsIgnoreCase("red")){
 
-                            System.out.println("adding red");
-                            System.out.println(cities.get(i).getName());
                             cityImageViews.add(new ImageView("images/red/" +cities.get(i).getName() + ".jpg"));
                         }
                         else if(cities.get(i).getColor().equalsIgnoreCase("yellow")){
-                            System.out.println("adding yellow");
-                            System.out.println(cities.get(i).getName());
                             cityImageViews.add(new ImageView("images/yellow/" +cities.get(i).getName() + ".jpg"));
                         }
                     }
-                    for (int i = 0; i < cityImageViews.size(); i++) {
-                        System.out.println(cityImageViews.get(i));
-                    }
+
                     cityDistribution();
                     setUpGameGui();
                 } catch (IOException e) {
@@ -432,6 +435,8 @@ public class JourneyUI {
     }
 
 
+
+
     public City firstCity(int n) {
         if (n % 3 == 1) {
             return redCities.get(randomCityGenerator.nextInt(redCities.size()));
@@ -439,6 +444,20 @@ public class JourneyUI {
             return greenCities.get(randomCityGenerator.nextInt(greenCities.size()));
         } else
             return yellowCities.get(randomCityGenerator.nextInt(yellowCities.size()));
+
+    }
+
+    public void setCurrentPlayer(){
+        System.out.println("current player index before if statement is: " + currentPlayerIndex);
+        if(currentPlayerIndex == activePlayers){
+            System.out.println("currentPlayerIndex = active Player\n\t" +
+                    "currPlayIndex: " + currentPlayerIndex + "\tactivePlayer: " + activePlayers);
+            currentPlayerIndex = 0;
+        }
+
+        System.out.println(" in setCurrentPlayer()");
+        currentPlayerIndex+=1;
+
 
     }
 
@@ -458,7 +477,6 @@ public class JourneyUI {
             System.out.println("Player 1 " + player1.getDestinations().get(i).getColor());
             System.out.println("Player 2 " + player2.getDestinations().get(i).getName());
             System.out.println("Player 2 " + player2.getDestinations().get(i).getColor());
-
         }
 
     }
@@ -466,14 +484,50 @@ public class JourneyUI {
     public void initGameScreen() throws FileNotFoundException, IOException {
 
         gamePane = new GridPane();
-        gamePane.setPrefSize(1000, 1000);
+        gamePane.setPrefSize(1300, 1300);
         gamePane.setVisible(true);
         aboutPane = new AnchorPane();
         historyPane = new AnchorPane();
-        leftPlayer1Box = new VBox();
         currentPlayerLabel.setFont(new Font("Calibri", 32));
+        currentPlayerLabel.setText(player1.getName());
         leftPlayer1Box.getChildren().add(currentPlayerLabel);
-        setBoxSizes();
+        setBoxSizes(leftPlayer1Box);
+        leftPlayer2Box = new VBox();
+        currentPlayerLabel.setText(player2.getName());
+        currentPlayerLabel.setFont(new Font("Calibri", 32));
+        leftPlayer2Box.getChildren().add(currentPlayerLabel);
+        setBoxSizes(leftPlayer2Box);
+        System.out.println("Player 3 is: " + player3);
+        if(player3!=null){
+            System.out.println("player 3 is not null");
+            currentPlayerLabel.setText(player3.getName());
+            currentPlayerLabel.setFont(new Font("Calibri", 32));
+            leftPlayer3Box.getChildren().add(currentPlayerLabel);
+            setBoxSizes(leftPlayer3Box);
+        }
+        if(player4!=null){
+            leftPlayer4Box = new VBox();
+            currentPlayerLabel.setText(player4.getName());
+            currentPlayerLabel.setFont(new Font("Calibri", 32));
+            leftPlayer4Box.getChildren().add(currentPlayerLabel);
+            setBoxSizes(leftPlayer4Box);
+        }
+        if(player5!=null){
+            leftPlayer5Box = new VBox();
+            currentPlayerLabel.setText(player5.getName());
+            currentPlayerLabel.setFont(new Font("Calibri", 32));
+            leftPlayer5Box.getChildren().add(currentPlayerLabel);
+            setBoxSizes(leftPlayer5Box);
+        }
+        if(player6!=null){
+            leftPlayer6Box = new VBox();
+            currentPlayerLabel.setText(player6.getName());
+            currentPlayerLabel.setFont(new Font("Calibri", 32));
+            leftPlayer6Box.getChildren().add(currentPlayerLabel);
+            setBoxSizes(leftPlayer6Box);
+
+        }
+
         gridPane1 = new AnchorPane();
         gridPane1.setPrefSize(600, 800);
         Image grid1Image = loadImage("grid1.jpg");
@@ -695,6 +749,20 @@ public class JourneyUI {
         rightBox.setAlignment(Pos.TOP_CENTER);
         rightBox.setPrefSize(200, 800);
         gamePane.add(leftPlayer1Box, 0, 0);
+        gamePane.add(leftPlayer2Box, 0, 0);
+        gamePane.add(leftPlayer3Box, 0, 0);
+        /**gamePane.add(leftPlayer4Box, 0, 0);
+         gamePane.add(leftPlayer5Box, 0, 0);
+         gamePane.add(leftPlayer5Box, 0, 0);**/
+        leftPlayer2Box.setVisible(false);
+        leftPlayer3Box.setVisible(false);
+        /**leftPlayer4Box.setVisible(false);
+         leftPlayer5Box.setVisible(false);
+         leftPlayer6Box.setVisible(false);**/
+
+
+
+
         gamePane.add(gridPane1, 1, 0);
         gamePane.add(gridPane2, 1, 0);
         gridPane2.setVisible(false);
@@ -704,6 +772,94 @@ public class JourneyUI {
         gridPane4.setVisible(false);
         gamePane.add(rightBox, 2, 0);
         initCoordinateLoader();
+    }
+    public void animateCards(){
+        VBox currentBox = new VBox();
+        if(currentPlayerIndex == 0){
+            currentBox = leftPlayer1Box;
+            leftPlayer2Box.setVisible(false);
+        }
+        else if(currentPlayerIndex == 1){
+            currentBox = leftPlayer2Box;
+            leftPlayer2Box.setVisible(true);
+            leftPlayer1Box.setVisible(false);
+        }
+        /**if(currentPlayerIndex == 2){
+         System.out.println("player 3 is " + player3);
+         System.out.println("current player is " + activePlayersList.get(currentPlayerIndex));
+         currentBox = leftPlayer3Box;
+         System.out.println(leftPlayer3Box + " this is it doe");
+         leftPlayer2Box.setVisible(false);
+         leftPlayer3Box.setVisible(true);
+         }
+
+         /**else if(currentPlayerIndex == 3){
+         currentBox = leftPlayer4Box;
+         leftPlayer3Box.setVisible(false);
+         leftPlayer4Box.setVisible(true);
+         }
+         else if(currentPlayerIndex == 4){
+         currentBox = leftPlayer5Box;
+         leftPlayer4Box.setVisible(false);
+         leftPlayer5Box.setVisible(true);
+
+         }
+         else if(currentPlayerIndex == 5){
+         currentBox = leftPlayer6Box;
+         leftPlayer5Box.setVisible(false);
+         leftPlayer6Box.setVisible(true);
+         }**/
+        currentPlayer = activePlayersList.get(currentPlayerIndex);
+        for (int i = 0; i < currentPlayer.getDestinations().size(); i++) {
+            ImageView cityImage;
+            String name = currentPlayer.getDestinations().get(i).getName();
+            for (int j = 0; j < cities.size(); j++) {
+                if(cities.get(j).getName().equalsIgnoreCase(name)){
+                    cityImage = cityImageViews.get(j);
+                    cityImage.setFitWidth(200);
+                    cityImage.setFitHeight(250);
+
+
+
+                    final Duration SEC_2 = Duration.millis(2000);
+                    final Duration SEC_3 = Duration.millis(3000);
+
+                    FadeTransition ft = new FadeTransition(SEC_3);
+                    ft.setFromValue(1.0f);
+                    ft.setToValue(0.3f);
+                    ft.setCycleCount((int) 2f);
+                    ft.setAutoReverse(true);
+                    TranslateTransition tt = new TranslateTransition(SEC_2);
+                    //tt.setFromX(500f);
+                    //tt.setToX(-300f);
+                    tt.setCycleCount((int) 2f);
+                    tt.setAutoReverse(true);
+                    RotateTransition rt = new RotateTransition(SEC_3);
+                    rt.setByAngle(180f);
+                    rt.setCycleCount((int) 2f);
+                    rt.setAutoReverse(true);
+                    ScaleTransition st = new ScaleTransition(SEC_2);
+                    st.setByX(1.5f);
+                    st.setByY(1.5f);
+                    st.setCycleCount((int) 2f);
+                    st.setAutoReverse(true);
+
+                    ParallelTransition pt = new ParallelTransition(cityImage, ft, tt, rt, st);
+
+                    pt.play();
+                    if(!currentBox.getChildren().contains(cityImage)){
+                        currentBox.getChildren().add(cityImage);
+                        currentBox.setVisible(true);
+                        System.out.println("this is true doe");
+                        currentBox.setVisible(true);
+                        System.out.println("currentBox: " + currentBox + " isVisible: " + currentBox.isVisible());
+
+                    }
+                }
+            }
+        }
+        setCurrentPlayer();
+
     }
 
     public void initCoordinateLoader() throws FileNotFoundException, IOException {
@@ -763,13 +919,11 @@ public class JourneyUI {
                 for (int i = 0; i < cities.size(); i++) {
                     if ((event.getX() + 20 >= cities.get(i).getxCoordinate() && event.getX() - 20 <= cities.get(i).getxCoordinate() &&
                             event.getY() + 20 >= cities.get(i).getyCoordinate() && event.getY() - 20 <= cities.get(i).getyCoordinate()) && cities.get(i).getQuarter() == 1) {
-                        System.out.println(cities.get(i).getName());
-                        System.out.println(cities.get(i).getQuarter());
-                        System.out.println(cities.get(i).getxCoordinate());
-                        System.out.println(cities.get(i).getyCoordinate());
                         ArrayList<City> neighbours = computeNeighbours(cities.get(i));
+
                         for (int j = 0; j < neighbours.size(); j++) {
                             if (neighbours.get(j).getQuarter() == 1) {
+
                                 int neighbourX = neighbours.get(j).getxCoordinate();
                                 int neighbourY = neighbours.get(j).getyCoordinate();
                                 Line l = new Line();
@@ -783,8 +937,6 @@ public class JourneyUI {
                             } else
                                 continue;
                         }
-                        Label cityName = new Label(cities.get(i).getName());
-                        leftPlayer1Box.getChildren().add(cityName);
                         break;
 
                     }
@@ -804,6 +956,15 @@ public class JourneyUI {
                         System.out.println(cities.get(i).getxCoordinate());
                         System.out.println(cities.get(i).getyCoordinate());
                         ArrayList<City> neighbours = computeNeighbours(cities.get(i));
+                        for (int j = 0; j < activePlayersList.size(); j++) {
+                            if(activePlayersList.get(j).getName().equals(cities.get(i).getName())){
+                                if(event.getX() + 20 >= neighbours.get(i).getxCoordinate() && event.getX() - 20 <= neighbours.get(i).getxCoordinate()
+                                        && event.getY() + 20 >= neighbours.get(i).getyCoordinate() && event.getY() - 20 <= neighbours.get(i).getyCoordinate()){
+                                    activePlayersList.get(j).setCurrentCity(neighbours.get(i));
+                                    playerPieceImageViews.get(j).relocate(event.getX()-20, event.getY()-25);
+                                }
+                            }
+                        }
                         for (int j = 0; j < neighbours.size(); j++) {
                             if (neighbours.get(j).getQuarter() == 2) {
                                 int neighbourX = neighbours.get(j).getxCoordinate();
@@ -820,8 +981,6 @@ public class JourneyUI {
                             } else
                                 continue;
                         }
-
-                        Label cityName = new Label(cities.get(i).getName());
                     }
                 }
             }
@@ -839,6 +998,15 @@ public class JourneyUI {
                         System.out.println(cities.get(i).getxCoordinate());
                         System.out.println(cities.get(i).getyCoordinate());
                         ArrayList<City> neighbours = computeNeighbours(cities.get(i));
+                        for (int j = 0; j < activePlayersList.size(); j++) {
+                            if(activePlayersList.get(j).getName().equals(cities.get(i).getName())){
+                                if(event.getX() + 20 >= neighbours.get(i).getxCoordinate() && event.getX() - 20 <= neighbours.get(i).getxCoordinate()
+                                        && event.getY() + 20 >= neighbours.get(i).getyCoordinate() && event.getY() - 20 <= neighbours.get(i).getyCoordinate()){
+                                    activePlayersList.get(j).setCurrentCity(neighbours.get(i));
+                                    playerPieceImageViews.get(j).relocate(event.getX()-20, event.getY()-25);
+                                }
+                            }
+                        }
                         for (int j = 0; j < neighbours.size(); j++) {
                             if (neighbours.get(j).getQuarter() == 3) {
                                 int neighbourX = neighbours.get(j).getxCoordinate();
@@ -857,7 +1025,6 @@ public class JourneyUI {
                         }
 
                         Label cityName = new Label(cities.get(i).getName());
-                        leftPlayer1Box.getChildren().add(cityName);
                     }
                 }
             }
@@ -875,6 +1042,16 @@ public class JourneyUI {
                         System.out.println(cities.get(i).getxCoordinate());
                         System.out.println(cities.get(i).getyCoordinate());
                         ArrayList<City> neighbours = computeNeighbours(cities.get(i));
+                        for (int j = 0; j < activePlayersList.size(); j++) {
+                            if(activePlayersList.get(j).getCurrentCity().getName().equals(neighbours.get(i).getName())){
+                                System.out.println("hello");
+                                if(event.getX() + 20 >= neighbours.get(i).getxCoordinate() && event.getX() - 20 <= neighbours.get(i).getxCoordinate()
+                                        && event.getY() + 20 >= neighbours.get(i).getyCoordinate() && event.getY() - 20 <= neighbours.get(i).getyCoordinate()){
+                                    activePlayersList.get(j).setCurrentCity(neighbours.get(i));
+                                    playerPieceImageViews.get(j).relocate(event.getX()-20, event.getY()-25);
+                                }
+                            }
+                        }
                         for (int j = 0; j < neighbours.size(); j++) {
                             if (neighbours.get(j).getQuarter() == 4) {
                                 int neighbourX = neighbours.get(j).getxCoordinate();
@@ -893,13 +1070,13 @@ public class JourneyUI {
                         }
 
                         Label cityName = new Label(cities.get(i).getName());
-                        leftPlayer1Box.getChildren().add(cityName);
                     }
                 }
             }
         });
 
     }
+
 
     public City getNextCityColor(City prevCity) {
 
@@ -950,13 +1127,24 @@ public class JourneyUI {
         playerPieceImageViews.get(playerIndex).relocate(activePlayersList.get(playerIndex).getHomeCity().getxCoordinate() - 20, activePlayersList.get(playerIndex).getHomeCity().getyCoordinate() - 42);
         getGrid(quarter).getChildren().addAll(playerFlagImageViews.get(playerIndex), playerPieceImageViews.get(playerIndex));
     }
+    public void playGame(){
+        movePlayers();
+        for (int i = 0; i < activePlayersList.size(); i++) {
+            currentPlayerPiece = playerPieceImageViews.get(i);
+            System.out.println("+" + currentPlayerPiece);
+        }
 
+    }
 
     public void setUpGameGui(){
+        animateCards();
+        playGame();
         for (int i = 0; i < activePlayersList.size(); i++) {
             System.out.println(activePlayersList.get(i));
             activePlayersList.get(i).setHomeCity(activePlayersList.get(i).getDestinations().get(0));
             activePlayersList.get(i).setCurrentCity(activePlayersList.get(i).getHomeCity());
+            activePlayersList.get(i).getHomeCity().setOccupied(true);
+            activePlayersList.get(i).getHomeCity().setOccupiedByPlayer(activePlayersList.get(i));
             System.out.println("Home city : " + activePlayersList.get(i).getHomeCity());
             setupGUI(activePlayersList.get(i), activePlayersList.get(i).getHomeCity().getQuarter());
         }
@@ -993,274 +1181,287 @@ public class JourneyUI {
         return listOfBrosNeighbours;
     }
     public void movePlayers() {
-            for (int i = 0; i < playerPieceImageViews.size(); i++) {
-                    final int finalI = i;
-                    playerPieceImageViews.get(i).setOnDragDetected(new EventHandler<MouseEvent>() {
-                        @Override
-                        public void handle(MouseEvent event) {
-                            System.out.println("onDragDetected");
-                            Dragboard db = playerPieceImageViews.get(finalI).startDragAndDrop(TransferMode.MOVE);
-                            ClipboardContent content = new ClipboardContent();
-                            Image sourceImage = playerPieceImageViews.get(finalI).getImage();
-                            content.putImage(sourceImage);
-                            db.setContent(content);
-                            event.consume();
-                        }
-                    });
+        for (int i = 0; i < playerPieceImageViews.size(); i++) {
+            final int finalI = i;
+            playerPieceImageViews.get(i).setOnDragDetected(new EventHandler<MouseEvent>() {
+                @Override
+                public void handle(MouseEvent event) {
+                    System.out.println("onDragDetected");
+                    Dragboard db = playerPieceImageViews.get(finalI).startDragAndDrop(TransferMode.MOVE);
+                    ClipboardContent content = new ClipboardContent();
+                    Image sourceImage = playerPieceImageViews.get(finalI).getImage();
+                    content.putImage(sourceImage);
+                    db.setContent(content);
+                    event.consume();
                 }
-                gridPane1.setOnDragOver(new EventHandler<DragEvent>() {
-                    @Override
-                    public void handle(DragEvent event) {
+            });
+        }
+        gridPane1.setOnDragOver(new EventHandler<DragEvent>() {
+            @Override
+            public void handle(DragEvent event) {
 
-                        Dragboard db = event.getDragboard();
+                Dragboard db = event.getDragboard();
 
-                        if (db.hasImage()) {
-                            event.acceptTransferModes(TransferMode.MOVE);
-                        }
-                        System.out.println(event.getX());
-                        System.out.println(event.getY());
-                        if (event.getX() > 600) {
-                            gridPane1.setVisible(false);
-                            gridPane2.setVisible(true);
-                        } else if (event.getY() > 780) {
-                            gridPane1.setVisible(false);
-                            gridPane3.setVisible(true);
-                        }
-                        event.consume();
-                    }
-                });
-                gridPane1.setOnDragDropped(new EventHandler<DragEvent>() {
-                    @Override
-                    public void handle(DragEvent event) {
-                        if(canMove) {
-                            Dragboard db = event.getDragboard();
-                            if (db.hasImage()) {
-                                for (int i = 0; i < playerPieceImageViews.size(); i++) {
-                                    if (db.getImage().getHeight() == playerPieceImageViews.get(i).getImage().getHeight()) {
-                                        ArrayList<City> listOfBrosNeighbours = computeNeighbours(activePlayersList.get(i));
-                                        for (int j = 0; j < listOfBrosNeighbours.size(); j++) {
-                                            System.out.println(listOfBrosNeighbours.get(j).getxCoordinate());
-                                            System.out.println(listOfBrosNeighbours.get(j).getyCoordinate());
-                                            System.out.println(event.getX());
-                                            System.out.println(event.getY());
-                                            if ((event.getX() + 20 >= listOfBrosNeighbours.get(j).getxCoordinate() && event.getX() - 20 <= listOfBrosNeighbours.get(j).getxCoordinate() &&
-                                                    event.getY() + 20 >= listOfBrosNeighbours.get(j).getyCoordinate() && event.getY() - 20 <= listOfBrosNeighbours.get(j).getyCoordinate())) {
-                                                System.out.println(true);
-                                                activePlayersList.get(i).setCurrentCity(listOfBrosNeighbours.get(j));
-                                                System.out.println("New City: " + activePlayersList.get(i).getCurrentCity().getName());
-                                                gridPane1.getChildren().remove(playerPieceImageViews.get(i));
-                                                playerPieceImageViews.get(i).relocate(event.getX() - 20, event.getY() - 25);
-                                                gridPane1.getChildren().add(playerPieceImageViews.get(i));
-                                                currentPlayerPoints--;
-                                                System.out.println(currentPlayerPoints);
-                                                points.setText("Points: " + currentPlayerPoints);
-                                                if (currentPlayerPoints == 0) {
-                                                    canMove = false;
-                                                }
-                                            }
+                if (db.hasImage()) {
+                    event.acceptTransferModes(TransferMode.MOVE);
+                }
+                if (event.getX() > 600) {
+                    gridPane1.setVisible(false);
+                    gridPane2.setVisible(true);
+                } else if (event.getY() > 780) {
+                    gridPane1.setVisible(false);
+                    gridPane3.setVisible(true);
+                }
+                event.consume();
+            }
+        });
+        gridPane1.setOnDragDropped(new EventHandler<DragEvent>() {
+            @Override
+            public void handle(DragEvent event) {
+                Dragboard db = event.getDragboard();
+                if (db.hasImage()) {
+                    for (int i = 0; i < playerPieceImageViews.size(); i++) {
+                        if (db.getImage().getHeight() == playerPieceImageViews.get(i).getImage().getHeight()) {
+                            System.out.println("this ran");
 
+                            ArrayList<City> listOfBrosNeighbours = computeNeighbours(activePlayersList.get(i));
+                            for (int j = 0; j < listOfBrosNeighbours.size(); j++) {
+                                System.out.println(listOfBrosNeighbours.get(j).getxCoordinate());
+                                System.out.println(listOfBrosNeighbours.get(j).getyCoordinate());
+                                System.out.println(event.getX());
+                                System.out.println(event.getY());
+                                if ((event.getX() + 50 >= listOfBrosNeighbours.get(j).getxCoordinate() && event.getX() - 50 <= listOfBrosNeighbours.get(j).getxCoordinate() &&
+                                        event.getY() + 50 >= listOfBrosNeighbours.get(j).getyCoordinate() && event.getY() - 50 <= listOfBrosNeighbours.get(j).getyCoordinate())) {
+                                    System.out.println(true);
+                                    activePlayersList.get(i).setCurrentCity(listOfBrosNeighbours.get(j));
+                                    System.out.println("New City: " + activePlayersList.get(i).getCurrentCity().getName());
+                                    gridPane1.getChildren().remove(playerPieceImageViews.get(i));
+                                    if (canMove) {
+
+                                        listOfBrosNeighbours.get(j).setOccupied(true);
+
+                                        playerPieceImageViews.get(i).relocate(event.getX() - 20, event.getY() - 25);
+                                        gridPane1.getChildren().add(playerPieceImageViews.get(i));
+                                        currentPlayerPoints-=1;
+                                        System.out.println(currentPlayerPoints);
+                                        points.setText("Points: " + currentPlayerPoints);
+                                        if (currentPlayerPoints == 0) {
+                                            canMove = false;
+                                            animateCards();
                                         }
+                                    }
+
+                                }
+                            }
+                        }
+
+                    }
+
+
+                }
+            }
+
+
+        });
+        gridPane2.setOnDragOver(new EventHandler<DragEvent>() {
+            @Override
+            public void handle(DragEvent event) {
+
+                Dragboard db = event.getDragboard();
+
+                if (db.hasImage()) {
+                    event.acceptTransferModes(TransferMode.MOVE);
+                }
+                if (event.getX() <= 3) {
+                    gridPane2.setVisible(false);
+                    gridPane1.setVisible(true);
+                }
+                if (event.getY() >= 780) {
+                    gridPane2.setVisible(false);
+                    gridPane4.setVisible(true);
+                }
+                event.consume();
+            }
+        });
+        gridPane2.setOnDragDropped(new EventHandler<DragEvent>() {
+            @Override
+            public void handle(DragEvent event) {
+
+                Dragboard db = event.getDragboard();
+
+                if (db.hasImage()) {
+                    for (int i = 0; i < playerPieceImageViews.size(); i++) {
+                        if (db.getImage().getHeight() == playerPieceImageViews.get(i).getImage().getHeight()) {
+                            System.out.println("this ran");
+
+                            ArrayList<City> listOfBrosNeighbours = computeNeighbours(activePlayersList.get(i));
+                            for (int j = 0; j < listOfBrosNeighbours.size(); j++) {
+                                System.out.println(listOfBrosNeighbours.get(j).getxCoordinate());
+                                System.out.println(listOfBrosNeighbours.get(j).getyCoordinate());
+                                System.out.println(event.getX());
+                                System.out.println(event.getY());
+                                if ((event.getX() + 50 >= listOfBrosNeighbours.get(j).getxCoordinate() && event.getX() - 50 <= listOfBrosNeighbours.get(j).getxCoordinate() &&
+                                        event.getY() + 50 >= listOfBrosNeighbours.get(j).getyCoordinate() && event.getY() - 50 <= listOfBrosNeighbours.get(j).getyCoordinate())) {
+                                    System.out.println(true);
+                                    activePlayersList.get(i).setCurrentCity(listOfBrosNeighbours.get(j));
+                                    System.out.println("New City: " + activePlayersList.get(i).getCurrentCity().getName());
+                                    gridPane2.getChildren().remove(playerPieceImageViews.get(i));
+                                    if(canMove){
+
+                                        listOfBrosNeighbours.get(j).setOccupied(true);
+
+                                        playerPieceImageViews.get(i).relocate(event.getX() - 20, event.getY() - 25);}
+                                    gridPane2.getChildren().add(playerPieceImageViews.get(i));
+                                    currentPlayerPoints-=1;
+                                    System.out.println(currentPlayerPoints);
+                                    points.setText("Points: " + currentPlayerPoints);
+                                    if (currentPlayerPoints == 0) {
+                                        canMove = false;
+                                        animateCards();
+                                    }
+
+                                }
+                            }
+
+                        }
+                    }
+
+                }
+            }
+
+
+
+        });
+        gridPane3.setOnDragOver(new EventHandler<DragEvent>() {
+            @Override
+            public void handle(DragEvent event) {
+                Dragboard db = event.getDragboard();
+                if (db.hasImage()) {
+                    event.acceptTransferModes(TransferMode.MOVE);
+                }
+                event.consume();
+                if (event.getX() >= 600) {
+                    gridPane3.setVisible(false);
+                    gridPane4.setVisible(true);
+                }
+                if (event.getY() <= 0) {
+                    gridPane3.setVisible(false);
+                    gridPane1.setVisible(true);
+                }
+            }
+        });
+        gridPane3.setOnDragDropped(new EventHandler<DragEvent>() {
+            @Override
+            public void handle(DragEvent event) {
+                Dragboard db = event.getDragboard();
+                if (db.hasImage()) {
+                    for (int i = 0; i < playerPieceImageViews.size(); i++) {
+                        if (db.getImage().getHeight() == playerPieceImageViews.get(i).getImage().getHeight()) {
+                            System.out.println("this ran");
+
+                            ArrayList<City> listOfBrosNeighbours = computeNeighbours(activePlayersList.get(i));
+                            for (int j = 0; j < listOfBrosNeighbours.size(); j++) {
+                                System.out.println(listOfBrosNeighbours.get(j).getxCoordinate());
+                                System.out.println(listOfBrosNeighbours.get(j).getyCoordinate());
+                                System.out.println(event.getX());
+                                System.out.println(event.getY());
+                                if ((event.getX() + 50 >= listOfBrosNeighbours.get(j).getxCoordinate() && event.getX() - 50 <= listOfBrosNeighbours.get(j).getxCoordinate() &&
+                                        event.getY() + 50 >= listOfBrosNeighbours.get(j).getyCoordinate() && event.getY() - 50 <= listOfBrosNeighbours.get(j).getyCoordinate())) {
+                                    System.out.println(true);
+                                    activePlayersList.get(i).setCurrentCity(listOfBrosNeighbours.get(j));
+                                    System.out.println("New City: " + activePlayersList.get(i).getCurrentCity().getName());
+                                    gridPane3.getChildren().remove(playerPieceImageViews.get(i));
+                                    if(canMove){
+
+                                        listOfBrosNeighbours.get(j).setOccupied(true);
+
+                                        playerPieceImageViews.get(i).relocate(event.getX() - 20, event.getY() - 25);}
+                                    gridPane3.getChildren().add(playerPieceImageViews.get(i));
+                                    currentPlayerPoints-=1;
+                                    System.out.println(currentPlayerPoints);
+                                    points.setText("Points: " + currentPlayerPoints);
+                                    if (currentPlayerPoints == 0) {
+                                        canMove = false;
+                                        animateCards();
                                     }
 
                                 }
 
 
                             }
+
                         }
                     }
 
-                });
-                gridPane2.setOnDragOver(new EventHandler<DragEvent>() {
-                    @Override
-                    public void handle(DragEvent event) {
+                }
+            }
 
-                        Dragboard db = event.getDragboard();
+        });
+        gridPane4.setOnDragOver(new EventHandler<DragEvent>() {
+            @Override
+            public void handle(DragEvent event) {
 
-                        if (db.hasImage()) {
-                            event.acceptTransferModes(TransferMode.MOVE);
-                        }
+                Dragboard db = event.getDragboard();
+                if (db.hasImage()) {
+                    event.acceptTransferModes(TransferMode.MOVE);
+                }
+                if (event.getX() <= 3) {
+                    gridPane4.setVisible(false);
+                    gridPane3.setVisible(true);
+                }
+                if (event.getY() <= 0) {
+                    gridPane4.setVisible(false);
+                    gridPane2.setVisible(true);
+                }
 
-                        System.out.println(event.getX());
-                        System.out.println(event.getY());
-                        if (event.getX() <= 3) {
-                            gridPane2.setVisible(false);
-                            gridPane1.setVisible(true);
-                        }
-                        if (event.getY() >= 780) {
-                            gridPane2.setVisible(false);
-                            gridPane4.setVisible(true);
-                        }
-                        event.consume();
-                    }
-                });
-                gridPane2.setOnDragDropped(new EventHandler<DragEvent>() {
-                    @Override
-                    public void handle(DragEvent event) {
-
-                        Dragboard db = event.getDragboard();
-                        if(canMove){
-                        if (db.hasImage()) {
-                            for (int i = 0; i < playerPieceImageViews.size(); i++) {
-                                if (db.getImage().getHeight() == playerPieceImageViews.get(i).getImage().getHeight()) {
-                                    ArrayList<City> listOfBrosNeighbours = computeNeighbours(activePlayersList.get(i));
-                                    for (int j = 0; j < listOfBrosNeighbours.size(); j++) {
-                                        System.out.println(listOfBrosNeighbours.get(j).getxCoordinate());
-                                        System.out.println(listOfBrosNeighbours.get(j).getyCoordinate());
-                                        System.out.println(event.getX());
-                                        System.out.println(event.getY());
-                                        if ((event.getX() + 20 >= listOfBrosNeighbours.get(j).getxCoordinate() && event.getX() - 20 <= listOfBrosNeighbours.get(j).getxCoordinate() &&
-                                                event.getY() + 20 >= listOfBrosNeighbours.get(j).getyCoordinate() && event.getY() - 20 <= listOfBrosNeighbours.get(j).getyCoordinate())) {
-                                            System.out.println(true);
-                                            activePlayersList.get(i).setCurrentCity(listOfBrosNeighbours.get(j));
-                                            System.out.println("New City: " + activePlayersList.get(i).getCurrentCity().getName());
-                                            gridPane2.getChildren().remove(playerPieceImageViews.get(i));
-                                            playerPieceImageViews.get(i).relocate(event.getX() - 20, event.getY() - 25);
-                                            gridPane2.getChildren().add(playerPieceImageViews.get(i));
-                                            currentPlayerPoints--;
-                                            System.out.println(currentPlayerPoints);
-                                            points.setText("Points: " + currentPlayerPoints);
-                                            if (currentPlayerPoints == 0) {
-                                                canMove = false;
-                                            }
-
-                                        }
+                event.consume();
+            }
+        });
+        gridPane4.setOnDragDropped(new EventHandler<DragEvent>() {
+            @Override
+            public void handle(DragEvent event) {
+                Dragboard db = event.getDragboard();
+                if (db.hasImage()) {
+                    for (int i = 0; i < playerPieceImageViews.size(); i++) {
+                        if (db.getImage().getHeight() == playerPieceImageViews.get(i).getImage().getHeight()) {
+                            System.out.println("this ran");
+                            ArrayList<City> listOfBrosNeighbours = computeNeighbours(activePlayersList.get(i));
+                            System.out.println(listOfBrosNeighbours.size());
+                            for (int j = 0; j < listOfBrosNeighbours.size(); j++) {
+                                System.out.println(listOfBrosNeighbours.get(j).getxCoordinate());
+                                System.out.println(listOfBrosNeighbours.get(j).getyCoordinate());
+                                System.out.println(event.getX());
+                                System.out.println(event.getY());
+                                if ((event.getX() + 50 >= listOfBrosNeighbours.get(j).getxCoordinate() && event.getX() - 50 <= listOfBrosNeighbours.get(j).getxCoordinate() &&
+                                        event.getY() + 50 >= listOfBrosNeighbours.get(j).getyCoordinate() && event.getY() - 50 <= listOfBrosNeighbours.get(j).getyCoordinate())) {
+                                    System.out.println(true);
+                                    activePlayersList.get(i).setCurrentCity(listOfBrosNeighbours.get(j));
+                                    System.out.println("New City: " + activePlayersList.get(i).getCurrentCity().getName());
+                                    gridPane4.getChildren().remove(playerPieceImageViews.get(i));
+                                    if(canMove){
+                                        listOfBrosNeighbours.get(j).setOccupied(true);
+                                        playerPieceImageViews.get(i).relocate(event.getX() - 20, event.getY() - 25);}
+                                    gridPane4.getChildren().add(playerPieceImageViews.get(i));
+                                    currentPlayerPoints-=1;
+                                    System.out.println(currentPlayerPoints);
+                                    points.setText("Points: " + currentPlayerPoints);
+                                    if (currentPlayerPoints == 0) {
+                                        canMove = false;
+                                        animateCards();
                                     }
 
                                 }
+
+
                             }
 
                         }
-                        }
                     }
 
+                }
+            }
 
-                });
-                gridPane3.setOnDragOver(new EventHandler<DragEvent>() {
-                    @Override
-                    public void handle(DragEvent event) {
-                        Dragboard db = event.getDragboard();
-                        if (db.hasImage()) {
-                            event.acceptTransferModes(TransferMode.MOVE);
-                        }
-                        event.consume();
-                        System.out.println(event.getX());
-                        System.out.println(event.getY());
-                        if (event.getX() >= 600) {
-                            gridPane3.setVisible(false);
-                            gridPane4.setVisible(true);
-                        }
-                        if (event.getY() <= 0) {
-                            gridPane3.setVisible(false);
-                            gridPane1.setVisible(true);
-                        }
-                    }
-                });
-                gridPane3.setOnDragDropped(new EventHandler<DragEvent>() {
-                    @Override
-                    public void handle(DragEvent event) {
-                        Dragboard db = event.getDragboard();
-                        if(canMove) {
-                            if (db.hasImage()) {
-                                for (int i = 0; i < playerPieceImageViews.size(); i++) {
-                                    if (db.getImage().getHeight() == playerPieceImageViews.get(i).getImage().getHeight()) {
-                                        ArrayList<City> listOfBrosNeighbours = computeNeighbours(activePlayersList.get(i));
-                                        for (int j = 0; j < listOfBrosNeighbours.size(); j++) {
-                                            System.out.println(listOfBrosNeighbours.get(j).getxCoordinate());
-                                            System.out.println(listOfBrosNeighbours.get(j).getyCoordinate());
-                                            System.out.println(event.getX());
-                                            System.out.println(event.getY());
-                                            if ((event.getX() + 20 >= listOfBrosNeighbours.get(j).getxCoordinate() && event.getX() - 20 <= listOfBrosNeighbours.get(j).getxCoordinate() &&
-                                                    event.getY() + 20 >= listOfBrosNeighbours.get(j).getyCoordinate() && event.getY() - 20 <= listOfBrosNeighbours.get(j).getyCoordinate())) {
-                                                System.out.println(true);
-                                                activePlayersList.get(i).setCurrentCity(listOfBrosNeighbours.get(j));
-                                                System.out.println("New City: " + activePlayersList.get(i).getCurrentCity().getName());
-                                                gridPane3.getChildren().remove(playerPieceImageViews.get(i));
-                                                playerPieceImageViews.get(i).relocate(event.getX() - 20, event.getY() - 25);
-                                                gridPane3.getChildren().add(playerPieceImageViews.get(i));
-                                                currentPlayerPoints--;
-                                                System.out.println(currentPlayerPoints);
-                                                points.setText("Points: " + currentPlayerPoints);
-                                                if (currentPlayerPoints == 0) {
-                                                    canMove = false;
-                                                }
-
-                                            }
-
-
-                                        }
-
-                                    }
-                                }
-
-                            }
-                        }
-                    }
-                });
-                gridPane4.setOnDragOver(new EventHandler<DragEvent>() {
-                    @Override
-                    public void handle(DragEvent event) {
-
-                        Dragboard db = event.getDragboard();
-                        System.out.println(event.getX());
-                        System.out.println(event.getY());
-
-                        if (db.hasImage()) {
-                            event.acceptTransferModes(TransferMode.MOVE);
-                        }
-                        if (event.getX() <= 3) {
-                            gridPane4.setVisible(false);
-                            gridPane3.setVisible(true);
-                        }
-                        if (event.getY() <= 0) {
-                            gridPane4.setVisible(false);
-                            gridPane2.setVisible(true);
-                        }
-
-                        event.consume();
-                    }
-                });
-                gridPane4.setOnDragDropped(new EventHandler<DragEvent>() {
-                    @Override
-                    public void handle(DragEvent event) {
-                        Dragboard db = event.getDragboard();
-                        if(canMove) {
-                            if (db.hasImage()) {
-                                for (int i = 0; i < playerPieceImageViews.size(); i++) {
-                                    if (db.getImage().getHeight() == playerPieceImageViews.get(i).getImage().getHeight()) {
-                                        ArrayList<City> listOfBrosNeighbours = computeNeighbours(activePlayersList.get(i));
-                                        System.out.println(listOfBrosNeighbours.size());
-                                        for (int j = 0; j < listOfBrosNeighbours.size(); j++) {
-                                            System.out.println(listOfBrosNeighbours.get(j).getxCoordinate());
-                                            System.out.println(listOfBrosNeighbours.get(j).getyCoordinate());
-                                            System.out.println(event.getX());
-                                            System.out.println(event.getY());
-                                            if ((event.getX() + 20 >= listOfBrosNeighbours.get(j).getxCoordinate() && event.getX() - 20 <= listOfBrosNeighbours.get(j).getxCoordinate() &&
-                                                    event.getY() + 20 >= listOfBrosNeighbours.get(j).getyCoordinate() && event.getY() - 20 <= listOfBrosNeighbours.get(j).getyCoordinate())) {
-                                                System.out.println(true);
-                                                activePlayersList.get(i).setCurrentCity(listOfBrosNeighbours.get(j));
-                                                System.out.println("New City: " + activePlayersList.get(i).getCurrentCity().getName());
-                                                gridPane4.getChildren().remove(playerPieceImageViews.get(i));
-                                                playerPieceImageViews.get(i).relocate(event.getX() - 20, event.getY() - 25);
-                                                gridPane4.getChildren().add(playerPieceImageViews.get(i));
-                                                currentPlayerPoints--;
-                                                System.out.println(currentPlayerPoints);
-                                                points.setText("Points: " + currentPlayerPoints);
-                                                if (currentPlayerPoints == 0) {
-                                                    canMove = false;
-                                                }
-
-                                            }
-
-
-                                        }
-
-                                    }
-                                }
-
-                            }
-                        }
-                    }
-                });
+        });
 
 
     }
@@ -1290,7 +1491,7 @@ public class JourneyUI {
 
     public void initMainPane() {
         mainPane = new BorderPane();
-        mainPane.resize(1000,1000);
+        mainPane.resize(1300,1300);
 
     }
 

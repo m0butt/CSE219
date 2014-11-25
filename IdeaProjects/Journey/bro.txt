@@ -376,7 +376,7 @@ Land neighbour: PESCARA
 Sea neighbour: SPLIT
 Sea neighbour: PATRAI
 City name: NARBONNE
-Land neighbour: CLERMONT FERRAND
+Land neighbour: CLERMONT-FERRAND
 Land neighbour: TOULOUSE
 Land neighbour: BARCELONA
 Land neighbour: MARSEILLE
@@ -526,14 +526,14 @@ Land neighbour: LUXEMBOURG
 Land neighbour: REIMS
 Land neighbour: DIJON
 Land neighbour: STRASBOURG
-City name: CLERMONT FERRAND
+City name: CLERMONT-FERRAND
 Land neighbour: LUXEMBOURG
 Land neighbour: REIMS
 Land neighbour: DIJON
 Land neighbour: STRASBOURG
 City name: LYON
 Land neighbour: DIJON
-Land neighbour: CLERMONT FERRAND
+Land neighbour: CLERMONT-FERRAND
 Land neighbour: MARSEILLE
 Land neighbour: TORINO
 Land neighbour: GENEVE
@@ -587,7 +587,7 @@ Land neighbour: VENEZIA
 City name: LIMOGES
 Land neighbour: BOURGES
 Land neighbour: BORDEAUX
-Land neighbour: CLERMONT FERRAND
+Land neighbour: CLERMONT-FERRAND
 City name: GALATI
 Land neighbour: CERNOVCY
 Land neighbour: CLUJ NAPOCA
@@ -716,7 +716,7 @@ City name: PARIS
 Land neighbour: LE HAVRE
 Land neighbour: RENNES
 Land neighbour: ORLEANS
-Land neighbour: CLERMONT FERRAND
+Land neighbour: CLERMONT-FERRAND
 Land neighbour: DIJON
 Land neighbour: REIMS
 Land neighbour: LILLE

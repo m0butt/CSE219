@@ -20,6 +20,17 @@ public class City {
     boolean isSeaPort;
     boolean isAirPort;
     boolean hasRules;
+    Player occupiedByPlayer;
+
+
+    public Player getOccupiedByPlayer() {
+        return occupiedByPlayer;
+    }
+
+    public void setOccupiedByPlayer(Player occupiedByPlayer) {
+        this.occupiedByPlayer = occupiedByPlayer;
+    }
+
 
     public int getyCoordinate() {
         return yCoordinate;

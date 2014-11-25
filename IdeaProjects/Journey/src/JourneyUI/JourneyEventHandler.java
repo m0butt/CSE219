@@ -18,7 +18,6 @@ public class JourneyEventHandler {
         try{
         ui.switchScreenRequest("selectPlayers");}
         catch (Exception e){
-            System.out.println("hello");
         }
     }
 
@@ -26,7 +25,6 @@ public class JourneyEventHandler {
         try{
         ui.switchScreenRequest("gameScreen");}
         catch (Exception e){
-            System.out.println("hello2");
         }
     }
     public void historyButtonRequest(){
